@@ -30,7 +30,7 @@ class ETLAgentSchema(BaseModel):
     #user_question : str = Field(..., description="The original question asked by the user")
 
 class RouterSchema(BaseModel):
-    answer: Literal["sql", "etl"] = Field(..., description="indicate whether the user's question is related to sql or etl operations")
+    answer: Literal["sql", "etl", "rag"] = Field(..., description="indicate whether the user's question is related to sql or etl operations or rag for questions about document-based knowledge.")
     comments: str= Field(..., description="addtional comment or feedback regarding the classification of the user question")
 
 class DataAgentSchema(BaseModel):

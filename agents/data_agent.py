@@ -1,451 +1,210 @@
+"""Parent LangGraph agent that routes requests to SQL, ETL, or RAG agents."""
+
+from __future__ import annotations
+
+import logging
 import os
 import sys
-import logging
+from typing import Annotated, Any, TypedDict
 
-# Allow imports when running the project from the root directory
-sys.path.append(
-    os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..")
-    )
-)
+# Ensure the project root is importable when this module is run directly.
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-from langchain_core.messages import HumanMessage, AIMessage
-from langgraph.graph import StateGraph, START, END
-
-from models.schema import RouterSchema, DataAgentSchema
-from utils.llm_pick import get_base_llm
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
+from langgraph.graph import END, START, StateGraph
+from langgraph.graph.message import add_messages
 
 from agents.etl_analyst import etl_analyst
+from agents.rag_agent import rag_node
 from agents.sql_analyst import sql_analyst
-
 from logging_config import setup_logging
-
-
-# ============================================================
-# Logging Configuration
-# ============================================================
+from models.schema import RouterSchema
+from utils.llm_pick import get_base_llm
 
 setup_logging()
-
 logger = logging.getLogger(__name__)
 
 
-# ============================================================
-# Parent Agent
-# ============================================================
+class DataAgentSchema(TypedDict):
+    """State shared by the parent agent's graph nodes."""
+
+    messages: Annotated[list[BaseMessage], add_messages]
+    route_response: str
+
 
 logger.info("Initializing Data Agent")
-
 llm = get_base_llm("medium")
-
 agent_router = llm.with_structured_output(RouterSchema)
-
 logger.info("Data Agent router initialized")
 
 
-# ============================================================
-# Router Node
-# ============================================================
+def _last_user_text(state: DataAgentSchema) -> str:
+    """Return the latest message's text, validating the input state."""
+    messages = state.get("messages", [])
+    if not messages:
+        raise ValueError("Data Agent received no messages.")
 
-def router_node(state: DataAgentSchema):
+    for message in reversed(messages):
+        if isinstance(message, HumanMessage):
+            content = message.content
+            return content if isinstance(content, str) else str(content)
 
+    last_message = messages[-1]
+    content = last_message.content
+    return content if isinstance(content, str) else str(content)
+
+
+def _structured_value(result: Any, key: str):
+    """Read a field from either a Pydantic result or a dictionary."""
+    if isinstance(result, dict):
+        return result.get(key)
+    return getattr(result, key, None)
+
+
+def _as_text(value: Any) -> str:
+    """Flatten a LangChain message payload into simple text."""
+    if isinstance(value, str):
+        return value.strip()
+
+    if isinstance(value, list):
+        parts = []
+        for item in value:
+            text = _as_text(item)
+            if text:
+                parts.append(text)
+        return "".join(parts).strip()
+
+    if isinstance(value, dict):
+        text = value.get("text") or value.get("content")
+        if text:
+            return _as_text(text)
+        return ""
+
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
+def _final_child_message(response: Any, agent_name: str) -> str:
+    """Extract the last useful non-tool message from an agent response."""
+    if hasattr(response, "model_dump"):
+        response = response.model_dump()
+
+    messages: list[Any] = []
+    if isinstance(response, dict):
+        messages = response.get("messages", [])
+    elif isinstance(response, list):
+        messages = response
+    elif hasattr(response, "messages"):
+        messages = getattr(response, "messages")
+
+    for message in reversed(messages):
+        if isinstance(message, dict):
+            if message.get("type") in {"tool", "tool_call"}:
+                continue
+            text = _as_text(message.get("content") or message.get("text"))
+            if text:
+                return text
+            continue
+
+        if hasattr(message, "tool_calls") and getattr(message, "tool_calls", None):
+            continue
+
+        if hasattr(message, "content"):
+            text = _as_text(message.content)
+            if text:
+                return text
+
+    return f"I couldn't generate a useful response from the {agent_name} agent."
+
+
+def router_node(state: DataAgentSchema) -> dict:
     logger.info("Router started")
-
     try:
+        user_message = _last_user_text(state)
+        result = agent_router.invoke(user_message)
+        route = _structured_value(result, "answer")
 
-        message = state.messages[-1].content
+        if not isinstance(route, str):
+            raise ValueError(
+                "Router output did not contain a string 'answer' field. "
+                "Check models/schema.py and RouterSchema."
+            )
 
-        route_response = agent_router.invoke(message)
+        route = route.strip().lower()
+        if route not in {"sql", "etl", "rag"}:
+            raise ValueError(
+                f"Invalid route '{route}'. Expected 'sql', 'etl', or 'rag'."
+            )
 
-        state.route_response = route_response.answer
-
-        logger.info(
-            "Request routed to: %s",
-            state.route_response
-        )
-
-        return state
-
-    except Exception as e:
-
-        logger.error(
-            "Router failed: %s",
-            e
-        )
-
+        logger.info("Request routed to: %s", route)
+        return {"route_response": route}
+    except Exception:
+        logger.exception("Router failed")
         raise
 
 
-# ============================================================
-# ETL Node
-# ============================================================
-
-def etl_node(state: DataAgentSchema):
-
-    logger.info("ETL agent started")
+def _invoke_child_agent(state: DataAgentSchema, route: str) -> dict:
+    """Invoke the selected specialist agent and append its final answer."""
+    messages = state.get("messages", [])
+    user_question = _last_user_text(state)
 
     try:
-
-        user_message = state.messages[-1].content
-
-        response = etl_analyst.invoke(
-            {
-                "messages": [
-                    HumanMessage(content=user_message)
-                ]
-            }
-        )
-
-        # Get messages returned by ETL agent
-        child_messages = response.get(
-            "messages",
-            []
-        )
-
-        logger.debug(
-            "ETL agent returned %d messages",
-            len(child_messages)
-        )
-
-        # Find the final useful response
-        final_message = None
-
-        for message in reversed(child_messages):
-
-            if not hasattr(
-                message,
-                "content"
-            ):
-                continue
-
-            if not message.content:
-                continue
-
-            # Don't return tool-call messages as final answer
-            if getattr(
-                message,
-                "tool_calls",
-                None
-            ):
-                continue
-
-            final_message = message.content
-
-            break
-
-        if final_message is None:
-
-            logger.warning(
-                "ETL agent completed without a final response"
+        if route == "sql":
+            result = sql_analyst.invoke(
+                {
+                    "messages": messages,
+                    "user_question": user_question,
+                    "curated_ques": user_question,
+                    "prompt_query_context": "",
+                    "is_safe": "No",
+                    "comments": "",
+                    "generated_sql_query": "",
+                    "sql_query_execution_result": "",
+                    "final_answer": "",
+                }
             )
-
-            final_message = (
-                "The ETL operation was completed successfully."
-            )
-
-        # Agent-generated response should be AIMessage
-        state.messages = state.messages + [
-            AIMessage(
-                content=final_message
-            )
-        ]
-
-        logger.info(
-            "ETL agent completed"
-        )
-
-        return state
-
-    except Exception as e:
-
-        logger.error(
-            "ETL agent failed: %s",
-            e
-        )
-
-        raise
-
-
-# ============================================================
-# SQL Node
-# ============================================================
-
-def sql_node(state: DataAgentSchema):
-
-    logger.info("SQL agent started")
-
-    try:
-
-        user_message = state.messages[-1].content
-
-        input_schema = {
-
-            "messages": [],
-
-            "user_question": user_message,
-
-            "curated_ques": "",
-
-            "prompt_query_context": "",
-
-            "generated_sql_query": "",
-
-            "is_safe": "No",
-
-            "comments": "",
-
-            "sql_query_execution_result": "",
-
-            "final_answer": "",
-        }
-
-        logger.debug(
-            "Invoking SQL Analyst"
-        )
-
-        response = sql_analyst.invoke(
-            input_schema
-        )
-
-        # ----------------------------------------------------
-        # SQL agent returns a state dictionary / model
-        # ----------------------------------------------------
-
-        if hasattr(
-            response,
-            "model_dump"
-        ):
-
-            response_data = response.model_dump()
-
-        elif isinstance(
-            response,
-            dict
-        ):
-
-            response_data = response
-
+        elif route == "etl":
+            result = etl_analyst.invoke({"messages": messages})
         else:
+            result = rag_node({"messages": messages})
+    except Exception:
+        logger.exception("Child agent invocation failed for route: %s", route)
+        answer = f"I couldn't process that {route} request right now."
+        return {"messages": [AIMessage(content=answer)]}
 
-            logger.warning(
-                "SQL agent returned unexpected response type: %s",
-                type(response).__name__
-            )
+    answer = _final_child_message(result, route)
+    return {"messages": [AIMessage(content=answer)]}
 
-            response_data = {}
-
-        # ----------------------------------------------------
-        # Get final answer
-        # ----------------------------------------------------
-
-        final_answer = response_data.get(
-            "final_answer",
-            ""
-        )
-
-        # ----------------------------------------------------
-        # Fallback
-        # ----------------------------------------------------
-
-        if not final_answer:
-
-            logger.warning(
-                "SQL agent completed without a final answer"
-            )
-
-            final_answer = (
-                "The SQL operation was completed, "
-                "but no final answer was returned."
-            )
-
-        # Agent-generated response should be AIMessage
-        state.messages = state.messages + [
-            AIMessage(
-                content=final_answer
-            )
-        ]
-
-        logger.info(
-            "SQL agent completed"
-        )
-
-        return state
-
-    except Exception as e:
-
-        logger.error(
-            "SQL agent failed: %s",
-            e
-        )
-
-        raise
-
-
-# ============================================================
-# Routing Edge
-# ============================================================
 
 def route_edge(state: DataAgentSchema) -> str:
-
-    route = state.route_response
-
-    logger.info(
-        "Evaluating route: %s",
-        route
-    )
-
-    if route == "sql":
-
-        logger.info(
-            "Routing request to SQL node"
-        )
-
-        return "sql_node"
-
-    elif route == "etl":
-
-        logger.info(
-            "Routing request to ETL node"
-        )
-
-        return "etl_node"
-
-    else:
-
-        logger.error(
-            "Invalid route response: %s",
-            route
-        )
-
-        raise ValueError(
-            f"Invalid route response: {route}"
-        )
+    """Return the selected route for conditional graph routing."""
+    return state.get("route_response", "").strip().lower()
 
 
-# ============================================================
-# Build Graph
-# ============================================================
+# Build the parent graph.
+data_agent_graph = StateGraph(DataAgentSchema)
+data_agent_graph.add_node("router_node", router_node)
+data_agent_graph.add_node("sql_agent", lambda state: _invoke_child_agent(state, "sql"))
+data_agent_graph.add_node("etl_agent", lambda state: _invoke_child_agent(state, "etl"))
+data_agent_graph.add_node("rag_agent", lambda state: _invoke_child_agent(state, "rag"))
 
-logger.info(
-    "Building Data Agent graph"
-)
-
-data_agent_graph = StateGraph(
-    DataAgentSchema
-)
-
-
-data_agent_graph.add_node(
-    "router_node",
-    router_node
-)
-
-data_agent_graph.add_node(
-    "etl_node",
-    etl_node
-)
-
-data_agent_graph.add_node(
-    "sql_node",
-    sql_node
-)
-
-
-# ============================================================
-# Graph Edges
-# ============================================================
-
-data_agent_graph.add_edge(
-    START,
-    "router_node"
-)
-
-
+data_agent_graph.add_edge(START, "router_node")
 data_agent_graph.add_conditional_edges(
     "router_node",
     route_edge,
     {
-        "sql_node": "sql_node",
-        "etl_node": "etl_node",
-    }
+        "sql": "sql_agent",
+        "etl": "etl_agent",
+        "rag": "rag_agent",
+    },
 )
-
-
-# End after SQL / ETL
-
-data_agent_graph.add_edge(
-    "sql_node",
-    END
-)
-
-data_agent_graph.add_edge(
-    "etl_node",
-    END
-)
-
-
-# ============================================================
-# Compile
-# ============================================================
+data_agent_graph.add_edge("sql_agent", END)
+data_agent_graph.add_edge("etl_agent", END)
+data_agent_graph.add_edge("rag_agent", END)
 
 data_agent = data_agent_graph.compile()
-
-logger.info(
-    "Data Agent graph compiled successfully"
-)
-
-
-# ============================================================
-# Standalone Test
-# ============================================================
-
-if __name__ == "__main__":
-
-    logger.info(
-        "Starting Data Agent standalone test"
-    )
-
-    try:
-
-        response = data_agent.invoke(
-            {
-                "messages": [
-                    HumanMessage(
-                        content=(
-                            "What are the different "
-                            "payment methods we have "
-                            "in our databases?"
-                        )
-                    )
-                ],
-
-                "route_response": "",
-            }
-        )
-
-        logger.info(
-            "Data Agent standalone test completed"
-        )
-
-        print("\n")
-        print("=" * 70)
-        print("DATA AGENT RESPONSE")
-        print("=" * 70)
-
-        for message in response["messages"]:
-
-            if hasattr(
-                message,
-                "content"
-            ) and message.content:
-
-                print(message.content)
-
-    except Exception as e:
-
-        logger.error(
-            "Data Agent standalone test failed: %s",
-            e
-        )
-
-        raise
+logger.info("Data Agent graph compiled successfully")

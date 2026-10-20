@@ -271,3 +271,1024 @@
 2026-09-18 10:12:15,951 | INFO | __main__ | Data Agent route: sql
 2026-09-18 10:12:15,954 | INFO | __main__ | Final AI response extracted successfully
 2026-09-18 10:12:15,956 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:24:48,212 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-09-20 14:24:48,214 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-09-20 14:24:48,455 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:24:48,456 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-09-20 14:24:48,456 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-09-20 14:24:48,463 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-09-20 14:24:48,718 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-09-20 14:24:48,749 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-09-20 14:24:48,751 | INFO | agents.data_agent | Initializing Data Agent
+2026-09-20 14:24:48,867 | INFO | agents.data_agent | Data Agent router initialized
+2026-09-20 14:24:48,868 | INFO | agents.data_agent | Building Data Agent graph
+2026-09-20 14:24:48,885 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-09-20 14:25:04,916 | INFO | __main__ | Processing new user request
+2026-09-20 14:25:04,920 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:25:04,938 | INFO | agents.data_agent | Router started
+2026-09-20 14:25:05,062 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:25:05,063 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-09-20 14:25:06,592 | INFO | agents.data_agent | Request routed to: sql
+2026-09-20 14:25:06,593 | INFO | agents.data_agent | Evaluating route: sql
+2026-09-20 14:25:06,593 | INFO | agents.data_agent | Routing request to SQL node
+2026-09-20 14:25:06,594 | INFO | agents.data_agent | SQL agent started
+2026-09-20 14:25:06,595 | INFO | agents.sql_analyst | SQL question curation started
+2026-09-20 14:25:06,595 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:25:06,674 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:25:06,677 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:25:08,715 | INFO | agents.sql_analyst | SQL question curation completed
+2026-09-20 14:25:08,717 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-09-20 14:25:08,717 | INFO | utils.database | Initializing database connection
+2026-09-20 14:25:08,835 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:25:08,836 | INFO | utils.database | Fetching schema details for schema: public
+2026-09-20 14:25:08,881 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-09-20 14:25:08,982 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-09-20 14:25:08,983 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-09-20 14:25:08,983 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-09-20 14:25:08,984 | INFO | agents.sql_analyst | SQL generation started
+2026-09-20 14:25:08,984 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:25:09,107 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:25:09,109 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:25:10,716 | INFO | agents.sql_analyst | SQL generation completed
+2026-09-20 14:25:10,718 | INFO | agents.sql_analyst | SQL safety validation started
+2026-09-20 14:25:10,719 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-09-20 14:25:10,719 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:25:10,770 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:25:10,775 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:25:12,370 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-09-20 14:25:12,370 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-09-20 14:25:12,373 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-09-20 14:25:12,374 | INFO | agents.sql_analyst | SQL execution started
+2026-09-20 14:25:12,374 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-09-20 14:25:12,374 | INFO | utils.database | Initializing database connection
+2026-09-20 14:25:12,429 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:25:12,429 | INFO | utils.database | Executing SQL query
+2026-09-20 14:25:12,516 | INFO | utils.database | SQL query executed successfully; 5 row(s) returned
+2026-09-20 14:25:12,517 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-09-20 14:25:12,519 | INFO | agents.sql_analyst | Generating final SQL response
+2026-09-20 14:25:12,519 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:25:12,597 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:25:12,600 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:25:13,624 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-09-20 14:25:13,626 | INFO | agents.data_agent | SQL agent completed
+2026-09-20 14:25:13,627 | INFO | __main__ | Data Agent execution completed in 8.71 seconds
+2026-09-20 14:25:13,628 | INFO | __main__ | Data Agent route: sql
+2026-09-20 14:25:13,629 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:25:13,630 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:27:54,614 | INFO | __main__ | Processing new user request
+2026-09-20 14:27:54,616 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:27:54,617 | INFO | agents.data_agent | Router started
+2026-09-20 14:27:54,619 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:27:56,261 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 14:27:56,261 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 14:27:56,262 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 14:27:56,262 | INFO | agents.data_agent | ETL agent started
+2026-09-20 14:27:56,264 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:27:57,521 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:27:57,522 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 14:27:57,523 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 14:27:57,523 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 14:27:57,523 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-09-20 14:27:57,524 | INFO | agents.etl_analyst | Extract and load operation started
+2026-09-20 14:27:57,525 | INFO | utils.etl_tools | Starting API extraction
+2026-09-20 14:27:57,947 | INFO | utils.etl_tools | API request completed successfully
+2026-09-20 14:27:57,947 | INFO | utils.etl_tools | Extracted 1 record(s) from API response
+2026-09-20 14:27:57,969 | INFO | utils.etl_tools | API extraction completed successfully
+2026-09-20 14:27:57,969 | INFO | utils.etl_tools | Extracted data saved successfully
+2026-09-20 14:27:57,973 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-09-20 14:27:57,974 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-09-20 14:27:57,974 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 14:27:57,976 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:27:59,431 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:27:59,432 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 14:27:59,432 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 14:27:59,433 | INFO | __main__ | Data Agent execution completed in 4.82 seconds
+2026-09-20 14:27:59,433 | INFO | __main__ | Data Agent route: etl
+2026-09-20 14:27:59,435 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:27:59,437 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:28:31,399 | INFO | __main__ | Processing new user request
+2026-09-20 14:28:31,400 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:28:31,402 | INFO | agents.data_agent | Router started
+2026-09-20 14:28:31,405 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:28:32,873 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 14:28:32,873 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 14:28:32,873 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 14:28:32,874 | INFO | agents.data_agent | ETL agent started
+2026-09-20 14:28:32,875 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:28:34,279 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:28:34,281 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 14:28:34,281 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 14:28:34,282 | INFO | __main__ | Data Agent execution completed in 2.88 seconds
+2026-09-20 14:28:34,282 | INFO | __main__ | Data Agent route: etl
+2026-09-20 14:28:34,283 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:28:34,284 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:28:56,681 | INFO | __main__ | Processing new user request
+2026-09-20 14:28:56,683 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:28:56,685 | INFO | agents.data_agent | Router started
+2026-09-20 14:28:56,686 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:28:57,974 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 14:28:57,974 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 14:28:57,974 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 14:28:57,975 | INFO | agents.data_agent | ETL agent started
+2026-09-20 14:28:57,976 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:28:59,452 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:28:59,453 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 14:28:59,453 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 14:28:59,455 | INFO | __main__ | Data Agent execution completed in 2.77 seconds
+2026-09-20 14:28:59,455 | INFO | __main__ | Data Agent route: etl
+2026-09-20 14:28:59,456 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:28:59,458 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:29:17,608 | INFO | __main__ | Processing new user request
+2026-09-20 14:29:17,610 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:29:17,612 | INFO | agents.data_agent | Router started
+2026-09-20 14:29:17,614 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:29:19,219 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 14:29:19,220 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 14:29:19,220 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 14:29:19,223 | INFO | agents.data_agent | ETL agent started
+2026-09-20 14:29:19,225 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:29:20,879 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:29:20,880 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 14:29:20,880 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 14:29:20,881 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 14:29:20,881 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-09-20 14:29:20,881 | INFO | agents.etl_analyst | Extract and load operation started
+2026-09-20 14:29:20,882 | INFO | utils.etl_tools | Starting API extraction
+2026-09-20 14:29:21,235 | INFO | utils.etl_tools | API request completed successfully
+2026-09-20 14:29:21,235 | INFO | utils.etl_tools | Extracted 1 record(s) from API response
+2026-09-20 14:29:21,248 | INFO | utils.etl_tools | API extraction completed successfully
+2026-09-20 14:29:21,248 | INFO | utils.etl_tools | Extracted data saved successfully
+2026-09-20 14:29:21,250 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-09-20 14:29:21,250 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-09-20 14:29:21,252 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 14:29:21,253 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:29:22,499 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:29:22,499 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 14:29:22,500 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 14:29:22,501 | INFO | __main__ | Data Agent execution completed in 4.89 seconds
+2026-09-20 14:29:22,501 | INFO | __main__ | Data Agent route: etl
+2026-09-20 14:29:22,503 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:29:22,506 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:31:17,246 | INFO | __main__ | Processing new user request
+2026-09-20 14:31:17,248 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:31:17,250 | INFO | agents.data_agent | Router started
+2026-09-20 14:31:17,251 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:31:18,376 | INFO | agents.data_agent | Request routed to: sql
+2026-09-20 14:31:18,376 | INFO | agents.data_agent | Evaluating route: sql
+2026-09-20 14:31:18,376 | INFO | agents.data_agent | Routing request to SQL node
+2026-09-20 14:31:18,377 | INFO | agents.data_agent | SQL agent started
+2026-09-20 14:31:18,378 | INFO | agents.sql_analyst | SQL question curation started
+2026-09-20 14:31:18,378 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:31:18,422 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:31:18,424 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:31:19,412 | INFO | agents.sql_analyst | SQL question curation completed
+2026-09-20 14:31:19,414 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-09-20 14:31:19,414 | INFO | utils.database | Initializing database connection
+2026-09-20 14:31:19,565 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:31:19,565 | INFO | utils.database | Fetching schema details for schema: public
+2026-09-20 14:31:19,577 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-09-20 14:31:19,626 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-09-20 14:31:19,626 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-09-20 14:31:19,627 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-09-20 14:31:19,628 | INFO | agents.sql_analyst | SQL generation started
+2026-09-20 14:31:19,628 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:31:19,680 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:31:19,682 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:31:21,024 | INFO | agents.sql_analyst | SQL generation completed
+2026-09-20 14:31:21,026 | INFO | agents.sql_analyst | SQL safety validation started
+2026-09-20 14:31:21,026 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-09-20 14:31:21,026 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:31:21,082 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:31:21,085 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:31:22,321 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-09-20 14:31:22,322 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-09-20 14:31:22,323 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-09-20 14:31:22,325 | INFO | agents.sql_analyst | SQL execution started
+2026-09-20 14:31:22,325 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-09-20 14:31:22,325 | INFO | utils.database | Initializing database connection
+2026-09-20 14:31:22,377 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:31:22,378 | INFO | utils.database | Executing SQL query
+2026-09-20 14:31:22,496 | INFO | utils.database | SQL query executed successfully; 0 row(s) returned
+2026-09-20 14:31:22,497 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-09-20 14:31:22,498 | INFO | agents.sql_analyst | Generating final SQL response
+2026-09-20 14:31:22,498 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:31:22,584 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:31:22,586 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:31:24,226 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-09-20 14:31:24,228 | INFO | agents.data_agent | SQL agent completed
+2026-09-20 14:31:24,229 | INFO | __main__ | Data Agent execution completed in 6.98 seconds
+2026-09-20 14:31:24,229 | INFO | __main__ | Data Agent route: sql
+2026-09-20 14:31:24,230 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:31:24,231 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:33:20,364 | INFO | __main__ | Processing new user request
+2026-09-20 14:33:20,366 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:33:20,368 | INFO | agents.data_agent | Router started
+2026-09-20 14:33:20,369 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:33:21,736 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 14:33:21,737 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 14:33:21,738 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 14:33:21,739 | INFO | agents.data_agent | ETL agent started
+2026-09-20 14:33:21,740 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:33:23,024 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:33:23,025 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 14:33:23,026 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 14:33:23,026 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 14:33:23,026 | INFO | agents.etl_analyst | Executing ETL tool: transform_load_tool
+2026-09-20 14:33:23,027 | INFO | agents.etl_analyst | Transform and load operation started
+2026-09-20 14:33:23,027 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 14:33:23,027 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920142757.json
+2026-09-20 14:33:23,028 | INFO | agents.etl_analyst | Input file resolved successfully
+2026-09-20 14:33:23,028 | INFO | utils.etl_tools | Starting ETL transform context
+2026-09-20 14:33:23,028 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 14:33:23,028 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920142757.json
+2026-09-20 14:33:23,028 | INFO | utils.etl_tools | Loading input file with format: .json
+2026-09-20 14:33:23,050 | INFO | utils.etl_tools | Input file loaded successfully
+2026-09-20 14:33:23,112 | INFO | utils.etl_tools | ETL transform context generated successfully
+2026-09-20 14:33:23,112 | INFO | agents.etl_analyst | Generating Pandas transformation code
+2026-09-20 14:33:23,112 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:33:23,177 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:33:23,179 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:33:24,735 | INFO | agents.etl_analyst | Pandas transformation code generated
+2026-09-20 14:33:24,736 | INFO | agents.etl_analyst | Executing Pandas transformation
+2026-09-20 14:33:24,736 | INFO | utils.etl_tools | Starting ETL code execution
+2026-09-20 14:33:24,739 | ERROR | utils.etl_tools | ETL code execution failed: If using all scalar values, you must pass an index
+2026-09-20 14:33:24,740 | INFO | agents.etl_analyst | Pandas transformation completed
+2026-09-20 14:33:24,744 | INFO | agents.etl_analyst | ETL tool completed: transform_load_tool
+2026-09-20 14:33:24,746 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 14:33:24,748 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:33:26,031 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:33:26,032 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 14:33:26,033 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 14:33:26,033 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 14:33:26,033 | INFO | agents.etl_analyst | Executing ETL tool: transform_load_tool
+2026-09-20 14:33:26,034 | INFO | agents.etl_analyst | Transform and load operation started
+2026-09-20 14:33:26,035 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 14:33:26,035 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920142757.json
+2026-09-20 14:33:26,036 | INFO | agents.etl_analyst | Input file resolved successfully
+2026-09-20 14:33:26,036 | INFO | utils.etl_tools | Starting ETL transform context
+2026-09-20 14:33:26,036 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 14:33:26,037 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920142757.json
+2026-09-20 14:33:26,038 | INFO | utils.etl_tools | Loading input file with format: .json
+2026-09-20 14:33:26,063 | INFO | utils.etl_tools | Input file loaded successfully
+2026-09-20 14:33:26,146 | INFO | utils.etl_tools | ETL transform context generated successfully
+2026-09-20 14:33:26,147 | INFO | agents.etl_analyst | Generating Pandas transformation code
+2026-09-20 14:33:26,147 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:33:26,370 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:33:26,374 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:33:27,603 | INFO | agents.etl_analyst | Pandas transformation code generated
+2026-09-20 14:33:27,603 | INFO | agents.etl_analyst | Executing Pandas transformation
+2026-09-20 14:33:27,603 | INFO | utils.etl_tools | Starting ETL code execution
+2026-09-20 14:33:27,606 | ERROR | utils.etl_tools | ETL code execution failed: If using all scalar values, you must pass an index
+2026-09-20 14:33:27,606 | INFO | agents.etl_analyst | Pandas transformation completed
+2026-09-20 14:33:27,608 | INFO | agents.etl_analyst | ETL tool completed: transform_load_tool
+2026-09-20 14:33:27,608 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 14:33:27,609 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 14:33:29,107 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 14:33:29,107 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 14:33:29,108 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 14:33:29,110 | INFO | __main__ | Data Agent execution completed in 8.74 seconds
+2026-09-20 14:33:29,110 | INFO | __main__ | Data Agent route: etl
+2026-09-20 14:33:29,112 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:33:29,114 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 14:36:18,133 | INFO | __main__ | Processing new user request
+2026-09-20 14:36:18,135 | INFO | __main__ | Calling Data Agent
+2026-09-20 14:36:18,137 | INFO | agents.data_agent | Router started
+2026-09-20 14:36:18,140 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:36:19,758 | INFO | agents.data_agent | Request routed to: sql
+2026-09-20 14:36:19,759 | INFO | agents.data_agent | Evaluating route: sql
+2026-09-20 14:36:19,759 | INFO | agents.data_agent | Routing request to SQL node
+2026-09-20 14:36:19,759 | INFO | agents.data_agent | SQL agent started
+2026-09-20 14:36:19,761 | INFO | agents.sql_analyst | SQL question curation started
+2026-09-20 14:36:19,762 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:36:19,815 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:36:19,817 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:36:20,873 | INFO | agents.sql_analyst | SQL question curation completed
+2026-09-20 14:36:20,876 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-09-20 14:36:20,877 | INFO | utils.database | Initializing database connection
+2026-09-20 14:36:20,950 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:36:20,951 | INFO | utils.database | Fetching schema details for schema: public
+2026-09-20 14:36:20,978 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-09-20 14:36:21,062 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-09-20 14:36:21,062 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-09-20 14:36:21,063 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-09-20 14:36:21,064 | INFO | agents.sql_analyst | SQL generation started
+2026-09-20 14:36:21,065 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:36:21,141 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:36:21,143 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:36:22,277 | INFO | agents.sql_analyst | SQL generation completed
+2026-09-20 14:36:22,280 | INFO | agents.sql_analyst | SQL safety validation started
+2026-09-20 14:36:22,281 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-09-20 14:36:22,281 | INFO | utils.llm_pick | Initializing LLM: low
+2026-09-20 14:36:22,340 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:36:22,342 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:36:23,992 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-09-20 14:36:23,992 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-09-20 14:36:23,994 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-09-20 14:36:23,995 | INFO | agents.sql_analyst | SQL execution started
+2026-09-20 14:36:23,995 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-09-20 14:36:23,995 | INFO | utils.database | Initializing database connection
+2026-09-20 14:36:24,049 | INFO | utils.database | Database connection established successfully
+2026-09-20 14:36:24,050 | INFO | utils.database | Executing SQL query
+2026-09-20 14:36:24,204 | INFO | utils.database | SQL query executed successfully; 10 row(s) returned
+2026-09-20 14:36:24,205 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-09-20 14:36:24,206 | INFO | agents.sql_analyst | Generating final SQL response
+2026-09-20 14:36:24,207 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 14:36:24,276 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 14:36:24,278 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 14:36:25,907 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-09-20 14:36:25,909 | INFO | agents.data_agent | SQL agent completed
+2026-09-20 14:36:25,909 | INFO | __main__ | Data Agent execution completed in 7.77 seconds
+2026-09-20 14:36:25,910 | INFO | __main__ | Data Agent route: sql
+2026-09-20 14:36:25,911 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 14:36:25,912 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 15:13:07,824 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-09-20 15:13:07,826 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-09-20 15:13:08,142 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 15:13:08,142 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-09-20 15:13:08,142 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-09-20 15:13:08,158 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-09-20 15:13:08,216 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-09-20 15:13:08,254 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-09-20 15:13:08,256 | INFO | agents.data_agent | Initializing Data Agent
+2026-09-20 15:13:08,380 | INFO | agents.data_agent | Data Agent router initialized
+2026-09-20 15:13:08,380 | INFO | agents.data_agent | Building Data Agent graph
+2026-09-20 15:13:08,400 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-09-20 15:14:20,217 | INFO | __main__ | Processing new user request
+2026-09-20 15:14:20,224 | INFO | __main__ | Calling Data Agent
+2026-09-20 15:14:20,251 | INFO | agents.data_agent | Router started
+2026-09-20 15:14:20,576 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 15:14:20,578 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-09-20 15:14:22,110 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 15:14:22,112 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 15:14:22,113 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 15:14:22,115 | INFO | agents.data_agent | ETL agent started
+2026-09-20 15:14:22,126 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 15:14:23,706 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 15:14:23,709 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 15:14:23,711 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 15:14:23,712 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 15:14:23,712 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-09-20 15:14:23,715 | INFO | agents.etl_analyst | Extract and load operation started
+2026-09-20 15:14:23,716 | INFO | utils.etl_tools | Starting API extraction
+2026-09-20 15:14:24,488 | INFO | utils.etl_tools | API request completed successfully
+2026-09-20 15:14:24,493 | INFO | utils.etl_tools | Extracted 100 record(s) from API response
+2026-09-20 15:14:24,532 | INFO | utils.etl_tools | API extraction completed successfully
+2026-09-20 15:14:24,560 | INFO | utils.etl_tools | Extracted data saved successfully
+2026-09-20 15:14:24,573 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-09-20 15:14:24,578 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-09-20 15:14:24,581 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 15:14:24,585 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 15:14:25,979 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 15:14:25,980 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 15:14:25,983 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 15:14:25,985 | INFO | __main__ | Data Agent execution completed in 5.76 seconds
+2026-09-20 15:14:25,991 | INFO | __main__ | Data Agent route: etl
+2026-09-20 15:14:25,997 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 15:14:26,002 | INFO | __main__ | AI response displayed and saved successfully
+2026-09-20 15:15:24,617 | INFO | __main__ | Processing new user request
+2026-09-20 15:15:24,631 | INFO | __main__ | Calling Data Agent
+2026-09-20 15:15:24,636 | INFO | agents.data_agent | Router started
+2026-09-20 15:15:24,650 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 15:15:25,899 | INFO | agents.data_agent | Request routed to: etl
+2026-09-20 15:15:25,901 | INFO | agents.data_agent | Evaluating route: etl
+2026-09-20 15:15:25,901 | INFO | agents.data_agent | Routing request to ETL node
+2026-09-20 15:15:25,903 | INFO | agents.data_agent | ETL agent started
+2026-09-20 15:15:25,912 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 15:15:27,241 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 15:15:27,242 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-09-20 15:15:27,244 | INFO | agents.etl_analyst | ETL tool node started
+2026-09-20 15:15:27,245 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-09-20 15:15:27,246 | INFO | agents.etl_analyst | Executing ETL tool: transform_load_tool
+2026-09-20 15:15:27,250 | INFO | agents.etl_analyst | Transform and load operation started
+2026-09-20 15:15:27,250 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 15:15:27,252 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920151424.csv
+2026-09-20 15:15:27,254 | INFO | agents.etl_analyst | Input file resolved successfully
+2026-09-20 15:15:27,258 | INFO | utils.etl_tools | Starting ETL transform context
+2026-09-20 15:15:27,259 | INFO | utils.etl_tools | Resolving input file
+2026-09-20 15:15:27,260 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20260920151424.csv
+2026-09-20 15:15:27,262 | INFO | utils.etl_tools | Loading input file with format: .csv
+2026-09-20 15:15:27,286 | INFO | utils.etl_tools | Input file loaded successfully
+2026-09-20 15:15:27,340 | INFO | utils.etl_tools | ETL transform context generated successfully
+2026-09-20 15:15:27,342 | INFO | agents.etl_analyst | Generating Pandas transformation code
+2026-09-20 15:15:27,343 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-09-20 15:15:27,550 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-09-20 15:15:27,559 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-09-20 15:15:29,385 | INFO | agents.etl_analyst | Pandas transformation code generated
+2026-09-20 15:15:29,386 | INFO | agents.etl_analyst | Executing Pandas transformation
+2026-09-20 15:15:29,390 | INFO | utils.etl_tools | Starting ETL code execution
+2026-09-20 15:15:29,435 | INFO | utils.etl_tools | ETL code executed successfully
+2026-09-20 15:15:29,436 | INFO | agents.etl_analyst | Pandas transformation completed
+2026-09-20 15:15:29,447 | INFO | agents.etl_analyst | ETL tool completed: transform_load_tool
+2026-09-20 15:15:29,449 | INFO | agents.etl_analyst | ETL tool node completed
+2026-09-20 15:15:29,451 | INFO | agents.etl_analyst | ETL LLM node started
+2026-09-20 15:15:30,647 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-09-20 15:15:30,648 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-09-20 15:15:30,650 | INFO | agents.data_agent | ETL agent completed
+2026-09-20 15:15:30,652 | INFO | __main__ | Data Agent execution completed in 6.02 seconds
+2026-09-20 15:15:30,656 | INFO | __main__ | Data Agent route: etl
+2026-09-20 15:15:30,662 | INFO | __main__ | Final AI response extracted successfully
+2026-09-20 15:15:30,667 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-08 08:34:59,214 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-08 08:34:59,216 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-08 08:34:59,584 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:34:59,584 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-08 08:34:59,584 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-08 08:34:59,597 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-08 08:34:59,877 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-08 08:34:59,897 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-08 08:34:59,906 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-08 08:34:59,985 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-08 08:34:59,985 | INFO | agents.data_agent | Building Data Agent graph
+2026-10-08 08:34:59,995 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-08 08:36:24,375 | INFO | __main__ | Processing new user request
+2026-10-08 08:36:24,378 | INFO | __main__ | Calling Data Agent
+2026-10-08 08:36:24,399 | INFO | agents.data_agent | Router started
+2026-10-08 08:36:24,575 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:36:24,577 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-10-08 08:36:25,944 | INFO | agents.data_agent | Request routed to: sql
+2026-10-08 08:36:25,945 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-08 08:36:25,945 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-08 08:36:25,947 | INFO | agents.data_agent | SQL agent started
+2026-10-08 08:36:25,951 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-08 08:36:25,952 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-08 08:36:26,039 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:36:26,044 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:36:27,142 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-08 08:36:27,149 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-08 08:36:27,150 | INFO | utils.database | Initializing database connection
+2026-10-08 08:36:27,271 | INFO | utils.database | Database connection established successfully
+2026-10-08 08:36:27,272 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-08 08:36:27,297 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-08 08:36:27,408 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-08 08:36:27,409 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-08 08:36:27,409 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-08 08:36:27,412 | INFO | agents.sql_analyst | SQL generation started
+2026-10-08 08:36:27,412 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-08 08:36:27,530 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:36:27,534 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:36:29,233 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-08 08:36:29,240 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-08 08:36:29,241 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-08 08:36:29,242 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-08 08:36:29,348 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:36:29,356 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:36:31,173 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-08 08:36:31,173 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-08 08:36:31,177 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-08 08:36:31,180 | INFO | agents.sql_analyst | SQL execution started
+2026-10-08 08:36:31,182 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-08 08:36:31,182 | INFO | utils.database | Initializing database connection
+2026-10-08 08:36:31,242 | INFO | utils.database | Database connection established successfully
+2026-10-08 08:36:31,242 | INFO | utils.database | Executing SQL query
+2026-10-08 08:36:31,409 | INFO | utils.database | SQL query executed successfully; 5 row(s) returned
+2026-10-08 08:36:31,409 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-08 08:36:31,411 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-08 08:36:31,411 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-08 08:36:31,513 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:36:31,517 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:36:32,808 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-08 08:36:32,812 | INFO | agents.data_agent | SQL agent completed
+2026-10-08 08:36:32,813 | INFO | __main__ | Data Agent execution completed in 8.43 seconds
+2026-10-08 08:36:32,814 | INFO | __main__ | Data Agent route: sql
+2026-10-08 08:36:32,816 | INFO | __main__ | Final AI response extracted successfully
+2026-10-08 08:36:32,820 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-08 08:37:00,642 | INFO | __main__ | Processing new user request
+2026-10-08 08:37:00,646 | INFO | __main__ | Calling Data Agent
+2026-10-08 08:37:00,650 | INFO | agents.data_agent | Router started
+2026-10-08 08:37:00,655 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:37:02,303 | INFO | agents.data_agent | Request routed to: etl
+2026-10-08 08:37:02,304 | INFO | agents.data_agent | Evaluating route: etl
+2026-10-08 08:37:02,304 | INFO | agents.data_agent | Routing request to ETL node
+2026-10-08 08:37:02,306 | INFO | agents.data_agent | ETL agent started
+2026-10-08 08:37:02,309 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-08 08:37:03,627 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-08 08:37:03,634 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-08 08:37:03,644 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-08 08:37:03,650 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-08 08:37:03,650 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-10-08 08:37:03,656 | INFO | agents.etl_analyst | Extract and load operation started
+2026-10-08 08:37:03,657 | INFO | utils.etl_tools | Starting API extraction
+2026-10-08 08:37:04,286 | INFO | utils.etl_tools | API request completed successfully
+2026-10-08 08:37:04,287 | INFO | utils.etl_tools | Extracted 100 record(s) from API response
+2026-10-08 08:37:04,331 | INFO | utils.etl_tools | API extraction completed successfully
+2026-10-08 08:37:04,332 | INFO | utils.etl_tools | Extracted data saved successfully
+2026-10-08 08:37:04,336 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-10-08 08:37:04,336 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-10-08 08:37:04,338 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-08 08:37:04,339 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-08 08:37:05,587 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-08 08:37:05,588 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-08 08:37:05,589 | INFO | agents.data_agent | ETL agent completed
+2026-10-08 08:37:05,590 | INFO | __main__ | Data Agent execution completed in 4.94 seconds
+2026-10-08 08:37:05,590 | INFO | __main__ | Data Agent route: etl
+2026-10-08 08:37:05,592 | INFO | __main__ | Final AI response extracted successfully
+2026-10-08 08:37:05,594 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-08 08:38:46,232 | INFO | __main__ | Processing new user request
+2026-10-08 08:38:46,237 | INFO | __main__ | Calling Data Agent
+2026-10-08 08:38:46,240 | INFO | agents.data_agent | Router started
+2026-10-08 08:38:46,245 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:38:47,771 | INFO | agents.data_agent | Request routed to: etl
+2026-10-08 08:38:47,772 | INFO | agents.data_agent | Evaluating route: etl
+2026-10-08 08:38:47,773 | INFO | agents.data_agent | Routing request to ETL node
+2026-10-08 08:38:47,774 | INFO | agents.data_agent | ETL agent started
+2026-10-08 08:38:47,777 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-08 08:38:49,411 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-08 08:38:49,412 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-08 08:38:49,413 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-08 08:38:49,414 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-08 08:38:49,414 | INFO | agents.etl_analyst | Executing ETL tool: transform_load_tool
+2026-10-08 08:38:49,416 | INFO | agents.etl_analyst | Transform and load operation started
+2026-10-08 08:38:49,417 | INFO | utils.etl_tools | Resolving input file
+2026-10-08 08:38:49,418 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20261008083704.csv
+2026-10-08 08:38:49,420 | INFO | agents.etl_analyst | Input file resolved successfully
+2026-10-08 08:38:49,421 | INFO | utils.etl_tools | Starting ETL transform context
+2026-10-08 08:38:49,421 | INFO | utils.etl_tools | Resolving input file
+2026-10-08 08:38:49,423 | INFO | utils.etl_tools | Input file resolved successfully: D:\agentic ai\Agentic AI-Based Multi-Source Data Retrieval and Stakeholder Intelligence Platform\data\extract\extract_20261008083704.csv
+2026-10-08 08:38:49,424 | INFO | utils.etl_tools | Loading input file with format: .csv
+2026-10-08 08:38:49,452 | INFO | utils.etl_tools | Input file loaded successfully
+2026-10-08 08:38:49,498 | INFO | utils.etl_tools | ETL transform context generated successfully
+2026-10-08 08:38:49,499 | INFO | agents.etl_analyst | Generating Pandas transformation code
+2026-10-08 08:38:49,500 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-08 08:38:49,585 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-08 08:38:49,588 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-08 08:38:51,506 | INFO | agents.etl_analyst | Pandas transformation code generated
+2026-10-08 08:38:51,507 | INFO | agents.etl_analyst | Executing Pandas transformation
+2026-10-08 08:38:51,507 | INFO | utils.etl_tools | Starting ETL code execution
+2026-10-08 08:38:51,543 | INFO | utils.etl_tools | ETL code executed successfully
+2026-10-08 08:38:51,544 | INFO | agents.etl_analyst | Pandas transformation completed
+2026-10-08 08:38:51,547 | INFO | agents.etl_analyst | ETL tool completed: transform_load_tool
+2026-10-08 08:38:51,548 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-08 08:38:51,551 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-08 08:38:53,299 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-08 08:38:53,299 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-08 08:38:53,299 | INFO | agents.data_agent | ETL agent completed
+2026-10-08 08:38:53,299 | INFO | __main__ | Data Agent execution completed in 7.07 seconds
+2026-10-08 08:38:53,304 | INFO | __main__ | Data Agent route: etl
+2026-10-08 08:38:53,306 | INFO | __main__ | Final AI response extracted successfully
+2026-10-08 08:38:53,309 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-20 16:56:28,254 | INFO | __main__ | Building RAG analyst graph
+2026-10-20 16:56:28,254 | INFO | __main__ | RAG analyst graph compiled successfully
+2026-10-20 16:56:28,254 | INFO | __main__ | Starting standalone RAG agent test
+2026-10-20 16:56:34,966 | INFO | __main__ | RAG node started
+2026-10-20 16:56:34,966 | INFO | __main__ | Document retrieval started (question_length=19, top_k=4)
+2026-10-20 16:56:34,972 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 16:56:36,030 | INFO | __main__ | Document retrieval completed (chunks=4, duration_seconds=1.062)
+2026-10-20 16:56:36,030 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 16:56:36,036 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 16:56:36,138 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 16:56:36,139 | INFO | __main__ | Calling configured LLM for RAG response
+2026-10-20 16:56:36,211 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 16:56:36,211 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-10-20 16:56:43,740 | INFO | __main__ | RAG answer generated (source_count=3, duration_seconds=7.603)
+2026-10-20 16:56:43,740 | INFO | __main__ | RAG node completed (total_duration_seconds=8.771)
+2026-10-20 16:56:43,749 | INFO | __main__ | Standalone RAG test completed
+2026-10-20 17:01:24,246 | INFO | agents.rag_agent | Building RAG analyst graph
+2026-10-20 17:01:24,255 | INFO | agents.rag_agent | RAG analyst graph compiled successfully
+2026-10-20 17:04:22,457 | INFO | agents.rag_agent | Building RAG analyst graph
+2026-10-20 17:04:22,457 | INFO | agents.rag_agent | RAG analyst graph compiled successfully
+2026-10-20 17:07:27,214 | INFO | agents.rag_agent | Building RAG analyst graph
+2026-10-20 17:07:27,228 | INFO | agents.rag_agent | RAG analyst graph compiled successfully
+2026-10-20 17:07:31,902 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:07:31,902 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:07:31,906 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:07:32,268 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:07:32,268 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:07:32,268 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:07:32,278 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:07:32,635 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:07:32,657 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:07:32,657 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:07:32,663 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:07:32,825 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:07:32,825 | INFO | agents.data_agent | Building Data Agent graph
+2026-10-20 17:07:32,843 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-20 17:07:57,399 | INFO | __main__ | Processing new user request
+2026-10-20 17:07:57,401 | INFO | __main__ | Calling Data Agent
+2026-10-20 17:07:57,491 | INFO | agents.data_agent | Router started
+2026-10-20 17:07:57,710 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:07:57,712 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-10-20 17:07:59,786 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:07:59,786 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:07:59,786 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:07:59,786 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:07:59,799 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:07:59,802 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:07:59,805 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:07:59,989 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:07:59,993 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:08:01,219 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:08:01,228 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:08:01,228 | INFO | utils.database | Initializing database connection
+2026-10-20 17:08:01,418 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:08:01,418 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:08:01,489 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:08:01,610 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:08:01,610 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:08:01,616 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:08:01,617 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:08:01,617 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:08:01,619 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:08:01,770 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:08:01,770 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:08:03,268 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:08:03,276 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:08:03,279 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:08:03,279 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:08:03,279 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:08:03,468 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:08:03,472 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:08:10,682 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:08:10,682 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:08:10,688 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:08:10,691 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:08:10,692 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:08:10,692 | INFO | utils.database | Initializing database connection
+2026-10-20 17:08:10,751 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:08:10,751 | INFO | utils.database | Executing SQL query
+2026-10-20 17:08:10,834 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-20 17:08:10,834 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:08:10,840 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:08:10,840 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:08:10,841 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:08:10,895 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:08:10,895 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:08:12,471 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:08:12,489 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:08:12,489 | INFO | __main__ | Data Agent execution completed in 15.09 seconds
+2026-10-20 17:08:12,489 | INFO | __main__ | Data Agent route: sql
+2026-10-20 17:08:12,492 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:08:12,495 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-20 17:09:05,092 | INFO | __main__ | Processing new user request
+2026-10-20 17:09:05,095 | INFO | __main__ | Calling Data Agent
+2026-10-20 17:09:05,100 | INFO | agents.data_agent | Router started
+2026-10-20 17:09:05,107 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:09:06,546 | INFO | agents.data_agent | Request routed to: rag
+2026-10-20 17:09:06,549 | INFO | agents.data_agent | Evaluating route: rag
+2026-10-20 17:09:06,549 | INFO | agents.data_agent | Routing request to RAG node
+2026-10-20 17:09:06,553 | INFO | agents.rag_agent | RAG node started
+2026-10-20 17:09:06,556 | INFO | agents.rag_agent | Document retrieval started (question_length=78, top_k=4)
+2026-10-20 17:09:06,560 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:09:08,023 | INFO | agents.rag_agent | Document retrieval completed (chunks=4, duration_seconds=1.464)
+2026-10-20 17:09:08,023 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:09:08,023 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:09:08,267 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:09:08,267 | INFO | agents.rag_agent | Calling configured LLM for RAG response
+2026-10-20 17:09:08,267 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:09:10,541 | INFO | agents.rag_agent | RAG answer generated (source_count=4, duration_seconds=2.274)
+2026-10-20 17:09:10,541 | INFO | agents.rag_agent | RAG node completed (total_duration_seconds=3.993)
+2026-10-20 17:09:10,555 | INFO | __main__ | Data Agent execution completed in 5.46 seconds
+2026-10-20 17:09:10,555 | INFO | __main__ | Data Agent route: rag
+2026-10-20 17:09:10,555 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:09:10,564 | INFO | __main__ | AI response displayed and saved successfully
+2026-10-20 17:14:35,184 | INFO | agents.rag_agent | Building RAG analyst graph
+2026-10-20 17:14:35,184 | INFO | agents.rag_agent | RAG analyst graph compiled successfully
+2026-10-20 17:14:36,649 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:14:36,649 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:14:36,665 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:14:36,996 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:14:36,999 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:14:37,001 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:14:37,019 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:14:37,131 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:14:37,159 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:14:37,165 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:14:37,165 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:14:37,397 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:14:37,397 | INFO | agents.data_agent | Building Data Agent graph
+2026-10-20 17:14:37,412 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-20 17:14:53,871 | INFO | agents.data_agent | Router started
+2026-10-20 17:14:54,028 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:14:54,028 | WARNING | google_genai.models | Direct use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
+2026-10-20 17:14:55,537 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:14:55,539 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:14:55,541 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:14:55,543 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:14:55,550 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:14:55,552 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:14:55,554 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:14:55,731 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:14:55,737 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:14:56,756 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:14:56,763 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:14:56,763 | INFO | utils.database | Initializing database connection
+2026-10-20 17:14:56,983 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:14:56,983 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:14:56,998 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:14:57,061 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:14:57,061 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:14:57,061 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:14:57,068 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:14:57,069 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:14:57,069 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:14:57,279 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:14:57,283 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:14:58,398 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:14:58,405 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:14:58,409 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:14:58,409 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:14:58,412 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:14:58,588 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:14:58,588 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:14:59,832 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:14:59,832 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:14:59,836 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:14:59,843 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:14:59,845 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:14:59,845 | INFO | utils.database | Initializing database connection
+2026-10-20 17:14:59,921 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:14:59,923 | INFO | utils.database | Executing SQL query
+2026-10-20 17:14:59,990 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-20 17:14:59,990 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:14:59,990 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:14:59,990 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:14:59,995 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:00,146 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:00,146 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:01,407 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:15:01,415 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:15:01,415 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:15:01,415 | INFO | __main__ | Assistant response completed. route=sql duration=7.56s
+2026-10-20 17:15:22,944 | INFO | agents.data_agent | Router started
+2026-10-20 17:15:22,944 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:24,197 | INFO | agents.data_agent | Request routed to: rag
+2026-10-20 17:15:24,197 | INFO | agents.data_agent | Evaluating route: rag
+2026-10-20 17:15:24,197 | INFO | agents.data_agent | Routing request to RAG node
+2026-10-20 17:15:24,205 | INFO | agents.rag_agent | RAG node started
+2026-10-20 17:15:24,205 | INFO | agents.rag_agent | Document retrieval started (question_length=43, top_k=4)
+2026-10-20 17:15:24,205 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:25,562 | INFO | agents.rag_agent | Document retrieval completed (chunks=4, duration_seconds=1.361)
+2026-10-20 17:15:25,570 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:15:25,571 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:25,750 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:25,754 | INFO | agents.rag_agent | Calling configured LLM for RAG response
+2026-10-20 17:15:25,758 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:27,182 | INFO | agents.rag_agent | RAG answer generated (source_count=2, duration_seconds=1.428)
+2026-10-20 17:15:27,182 | INFO | agents.rag_agent | RAG node completed (total_duration_seconds=2.978)
+2026-10-20 17:15:27,189 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:15:27,196 | INFO | __main__ | Assistant response completed. route=rag duration=4.25s
+2026-10-20 17:15:51,295 | INFO | agents.data_agent | Router started
+2026-10-20 17:15:51,302 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:52,466 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:15:52,466 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:15:52,468 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:15:52,468 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:15:52,468 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:15:52,468 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:15:52,468 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:52,645 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:52,645 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:53,912 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:15:53,912 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:15:53,912 | INFO | utils.database | Initializing database connection
+2026-10-20 17:15:54,015 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:15:54,015 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:15:54,030 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:15:54,080 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:15:54,080 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:15:54,080 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:15:54,083 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:15:54,083 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:15:54,083 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:54,230 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:54,243 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:55,332 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:15:55,340 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:15:55,340 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:15:55,340 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:15:55,345 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:55,511 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:55,515 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:56,961 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:15:56,961 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:15:56,978 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:15:56,979 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:15:56,981 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:15:56,981 | INFO | utils.database | Initializing database connection
+2026-10-20 17:15:57,173 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:15:57,173 | INFO | utils.database | Executing SQL query
+2026-10-20 17:15:57,278 | INFO | utils.database | SQL query executed successfully; 5 row(s) returned
+2026-10-20 17:15:57,278 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:15:57,278 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:15:57,286 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:15:57,286 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:15:57,445 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:15:57,445 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:15:58,812 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:15:58,816 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:15:58,816 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:15:58,816 | INFO | __main__ | Assistant response completed. route=sql duration=7.52s
+2026-10-20 17:16:19,374 | INFO | agents.data_agent | Router started
+2026-10-20 17:16:19,377 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:20,462 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:16:20,462 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:16:20,462 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:16:20,462 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:16:20,462 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:16:20,462 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:16:20,462 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:20,645 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:20,645 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:21,545 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:16:21,554 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:16:21,556 | INFO | utils.database | Initializing database connection
+2026-10-20 17:16:21,664 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:16:21,664 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:16:21,681 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:16:21,731 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:16:21,733 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:16:21,733 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:16:21,733 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:16:21,733 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:16:21,738 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:21,878 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:21,890 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:22,978 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:16:22,978 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:16:22,978 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:16:22,978 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:16:22,978 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:23,161 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:23,170 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:24,412 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:16:24,412 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:16:24,412 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:16:24,423 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:16:24,423 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:16:24,423 | INFO | utils.database | Initializing database connection
+2026-10-20 17:16:24,513 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:16:24,513 | INFO | utils.database | Executing SQL query
+2026-10-20 17:16:24,599 | INFO | utils.database | SQL query executed successfully; 5 row(s) returned
+2026-10-20 17:16:24,599 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:16:24,607 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:16:24,608 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:16:24,608 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:24,761 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:24,767 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:26,245 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:16:26,261 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:16:26,261 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:16:26,268 | INFO | __main__ | Assistant response completed. route=sql duration=6.89s
+2026-10-20 17:16:56,195 | INFO | agents.data_agent | Router started
+2026-10-20 17:16:56,195 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:57,485 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:16:57,485 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:16:57,485 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:16:57,490 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:16:57,494 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:16:57,500 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:16:57,500 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:57,760 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:57,762 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:16:59,012 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:16:59,032 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:16:59,032 | INFO | utils.database | Initializing database connection
+2026-10-20 17:16:59,145 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:16:59,152 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:16:59,183 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:16:59,264 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:16:59,264 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:16:59,264 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:16:59,264 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:16:59,264 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:16:59,264 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:16:59,427 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:16:59,428 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:00,878 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:17:00,878 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:17:00,878 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:17:00,878 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:17:00,878 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:01,066 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:01,068 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:02,494 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:17:02,507 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:17:02,511 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:17:02,511 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:17:02,511 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:17:02,511 | INFO | utils.database | Initializing database connection
+2026-10-20 17:17:02,587 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:17:02,587 | INFO | utils.database | Executing SQL query
+2026-10-20 17:17:02,652 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-20 17:17:02,652 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:17:02,655 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:17:02,655 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:17:02,656 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:02,807 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:02,810 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:04,134 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:17:04,151 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:17:04,151 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:17:04,151 | INFO | __main__ | Assistant response completed. route=sql duration=7.95s
+2026-10-20 17:17:18,882 | INFO | agents.data_agent | Router started
+2026-10-20 17:17:18,884 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:20,113 | INFO | agents.data_agent | Request routed to: sql
+2026-10-20 17:17:20,113 | INFO | agents.data_agent | Evaluating route: sql
+2026-10-20 17:17:20,113 | INFO | agents.data_agent | Routing request to SQL node
+2026-10-20 17:17:20,122 | INFO | agents.data_agent | SQL agent started
+2026-10-20 17:17:20,124 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-20 17:17:20,126 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:17:20,128 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:20,295 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:20,299 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:21,228 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-20 17:17:21,243 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-20 17:17:21,244 | INFO | utils.database | Initializing database connection
+2026-10-20 17:17:21,338 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:17:21,344 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-20 17:17:21,353 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-20 17:17:21,458 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-20 17:17:21,460 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-20 17:17:21,462 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-20 17:17:21,466 | INFO | agents.sql_analyst | SQL generation started
+2026-10-20 17:17:21,478 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:17:21,483 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:21,660 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:21,660 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:23,260 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-20 17:17:23,260 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-20 17:17:23,260 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-20 17:17:23,260 | INFO | utils.llm_pick | Initializing LLM: low
+2026-10-20 17:17:23,275 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:23,443 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:23,451 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:24,613 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-20 17:17:24,613 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-20 17:17:24,630 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-20 17:17:24,630 | INFO | agents.sql_analyst | SQL execution started
+2026-10-20 17:17:24,630 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-20 17:17:24,630 | INFO | utils.database | Initializing database connection
+2026-10-20 17:17:24,738 | INFO | utils.database | Database connection established successfully
+2026-10-20 17:17:24,738 | INFO | utils.database | Executing SQL query
+2026-10-20 17:17:24,799 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-20 17:17:24,799 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-20 17:17:24,801 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-20 17:17:24,801 | INFO | utils.llm_pick | Initializing LLM: medium
+2026-10-20 17:17:24,801 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:17:24,944 | INFO | utils.llm_pick | LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:17:24,957 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-10-20 17:17:26,262 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-20 17:17:26,264 | INFO | agents.data_agent | SQL agent completed
+2026-10-20 17:17:26,264 | INFO | __main__ | Final AI response extracted successfully
+2026-10-20 17:17:26,274 | INFO | __main__ | Assistant response completed. route=sql duration=7.39s
+2026-10-20 17:28:43,607 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:28:43,607 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:28:43,617 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:28:43,940 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:28:43,940 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:28:43,940 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:28:43,940 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:28:44,000 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:28:44,019 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:28:44,024 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:28:44,026 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:28:44,193 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:28:44,195 | INFO | agents.data_agent | Building Data Agent graph
+2026-10-20 17:35:17,010 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:35:17,010 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:35:17,016 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:35:17,322 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:35:17,322 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:35:17,322 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:35:17,339 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:35:17,393 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:35:17,411 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:35:17,412 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:35:17,416 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:35:17,611 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:35:17,615 | INFO | agents.data_agent | Building Data Agent graph
+2026-10-20 17:35:17,665 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-20 17:35:31,090 | INFO | agents.data_agent | Router started
+2026-10-20 17:35:31,091 | ERROR | agents.data_agent | Router failed: 'dict' object has no attribute 'messages'
+2026-10-20 17:35:31,093 | ERROR | __main__ | Agent request failed [AttributeError]: 'dict' object has no attribute 'messages'
+2026-10-20 17:39:19,171 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:39:19,171 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:39:19,188 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:39:19,336 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:39:19,336 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:39:19,336 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:39:19,340 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:39:20,060 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:39:20,071 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:39:20,074 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:39:20,074 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:39:20,131 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:50:06,967 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:50:06,968 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:50:06,973 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:50:09,537 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:50:09,537 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:50:09,537 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:50:09,545 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:52:03,306 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-20 17:52:03,306 | INFO | utils.llm_pick | Initializing tool LLM: medium
+2026-10-20 17:52:03,308 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:52:04,388 | INFO | utils.llm_pick | Tool LLM initialized successfully: gemini-3.5-flash-lite
+2026-10-20 17:52:04,388 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-20 17:52:04,388 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-20 17:52:04,393 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-20 17:52:05,674 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-20 17:52:05,682 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-20 17:52:05,684 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-20 17:52:05,685 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-20 17:52:06,567 | INFO | agents.data_agent | Data Agent router initialized
+2026-10-20 17:52:06,569 | INFO | agents.data_agent | Data Agent graph compiled successfully
