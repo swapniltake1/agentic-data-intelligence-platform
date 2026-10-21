@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import logging
+from pathlib import Path
 
 # Allow imports when running the project from the root directory
 sys.path.append(
@@ -14,7 +15,8 @@ from logging_config import setup_logging
 
 setup_logging()
 
-from utils.database import DatabaseUtil, DB_CONFIG
+from utils.database import DatabaseUtil, get_db_config
+from utils.graph_visualization import save_graph_png
 from utils.llm_pick import extract_content, pick_llm
 from models.schema import AgentSchema, JudgeSchema
 
@@ -315,7 +317,7 @@ def propmt_query_context(
         curated_question = state.curated_ques
 
         schema_info = DatabaseUtil(
-            DB_CONFIG
+            get_db_config()
         ).schema_details("public")
 
         logger.info(
@@ -734,7 +736,7 @@ def execute_sql(
         # -----------------------------------------------------------
 
         dbconn = DatabaseUtil(
-            DB_CONFIG
+            get_db_config()
         )
 
         execution_result = (
@@ -1004,18 +1006,11 @@ if __name__ == "__main__":
             HTML,
         )
 
-        graph_png = (
-            sql_analyst
-            .get_graph()
-            .draw_mermaid_png()
+        graph_png = save_graph_png(
+            sql_analyst,
+            Path(__file__).resolve().parents[1]
+            / "sql_analyst_graph.png",
         )
-
-        with open(
-            "sql_analyst_graph.png",
-            "wb",
-        ) as f:
-
-            f.write(graph_png)
 
         logger.info(
             "SQL Analyst graph visualization generated"

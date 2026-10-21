@@ -1,6 +1,8 @@
 import os
 import sys
 import logging
+from functools import lru_cache
+from pathlib import Path
 
 # Allow imports when running the project from the root directory
 sys.path.append(
@@ -27,6 +29,7 @@ from langgraph.graph import (
 from langchain.tools import tool
 
 from utils.etl_tools import ETLTools
+from utils.graph_visualization import save_graph_png
 from utils.llm_pick import (
     extract_content,
     get_tool_llm,
@@ -256,19 +259,13 @@ tools = [
 ]
 
 
-logger.info(
-    "Initializing ETL agent tools"
-)
-
-llm_bind = get_tool_llm(
-    "medium",
-    tools,
-)
-
-
-logger.info(
-    "ETL agent tools initialized successfully"
-)
+@lru_cache(maxsize=1)
+def _get_etl_llm_bind():
+    """Create the tool-calling model only when the ETL node runs."""
+    logger.info("Initializing ETL agent tools")
+    llm = get_tool_llm("medium", tools)
+    logger.info("ETL agent tools initialized successfully")
+    return llm
 
 
 # ============================================================
@@ -306,7 +303,7 @@ def llm_node(
             "Invoking ETL LLM"
         )
 
-        final_answer = llm_bind.invoke(
+        final_answer = _get_etl_llm_bind().invoke(
             prompt
         )
 
@@ -514,18 +511,11 @@ if __name__ == "__main__":
         # Generate graph visualization
         # ----------------------------------------------------
 
-        graph_png = (
-            etl_analyst
-            .get_graph()
-            .draw_mermaid_png()
+        save_graph_png(
+            etl_analyst,
+            Path(__file__).resolve().parents[1]
+            / "etl_analyst_graph.png",
         )
-
-        with open(
-            "etl_analyst_graph.png",
-            "wb",
-        ) as f:
-
-            f.write(graph_png)
 
         logger.info(
             "ETL agent graph visualization generated"
