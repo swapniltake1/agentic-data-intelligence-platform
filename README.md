@@ -36,9 +36,11 @@ The platform currently provides three specialist workflows:
 - Centralized rotating file logging for application diagnostics
 - Structured Pydantic agent state models
 
-## Architecture
+The platform currently supports three specialist paths:
 
-### Platform Architecture
+- **SQL Analyst** — uses PostgreSQL schema and sample-data context to generate a query, apply deterministic read-only safety checks and an LLM safety review, execute an approved query, and interpret the results.
+- **ETL Analyst** — selects extraction and transformation tools for API- and file-based workflows.
+- **RAG Analyst** — retrieves relevant chunks from a local Chroma vector store and uses the retrieved context to generate an answer grounded in the configured knowledge base.
 
 ```mermaid
 flowchart LR
@@ -86,40 +88,57 @@ flowchart TD
     rag_llm_node --> R_END(["END"])
 ```
 
-### SQL Analyst Guarded Workflow
+### End-to-end platform architecture
 
 ```mermaid
-flowchart TD
-    A["Business Question"] --> B["Question Curation"]
-    B --> C["Schema + Sample Data Context"]
-    C --> D["LLM SQL Generation"]
-    D --> E["Deterministic SQL Validator"]
-    E --> F{"Read-Only and Safe?"}
-    F -->|No| G["Cancel Query"]
-    F -->|Yes| H["LLM Safety Judge"]
-    H --> I{"Approved?"}
-    I -->|No| G
-    I -->|Yes| J["Final Pre-Execution Validation"]
-    J --> K["PostgreSQL Execution"]
-    K --> L["Result Interpretation"]
-    L --> M["Stakeholder Answer"]
+flowchart TB
+    USER([User]) --> UI[Streamlit Chat UI]
+    UI --> PARENT[Parent Data Agent - LangGraph]
+    PARENT --> ROUTER{Structured Request Router}
+
+    ROUTER -->|SQL question| SQL[SQL Analyst]
+    ROUTER -->|ETL task| ETL[ETL Analyst]
+    ROUTER -->|Document knowledge question| RAG[RAG Analyst]
+
+    SQL --> GUARD[Deterministic SQL Safety Checks]
+    GUARD --> JUDGE[LLM Safety Review]
+    JUDGE -->|Approved| PG[(PostgreSQL)]
+    PG --> SQLANSWER[Query Result Interpretation]
+
+    ETL --> TOOLS[API / File / Pandas Tools]
+    TOOLS --> ETLANSWER[ETL Result]
+
+    RAG --> RETRIEVE[Similarity Retriever]
+    RETRIEVE --> CHROMA[(Persistent Chroma Vector Store)]
+    CHROMA --> CONTEXT[Retrieved Document Chunks]
+    CONTEXT --> GEMINI[Google Gemini Response Generation]
+
+    SQLANSWER --> RESPONSE[Final Response]
+    ETLANSWER --> RESPONSE
+    GEMINI --> RESPONSE
+    RESPONSE --> UI
+
+    PARENT -.-> LOGS[Centralized Logging]
+    SQL -.-> LOGS
+    ETL -.-> LOGS
+    RAG -.-> LOGS
 ```
 
-### ETL Analyst Workflow
+### Request-routing workflow
 
 ```mermaid
 flowchart TD
-    A["ETL Request"] --> B["ETL Analyst"]
-    B --> C["Tool Selection"]
-    C --> D{"Operation Required"}
-    D -->|Extract| E["API / Source Extraction"]
-    D -->|Transform| F["Pandas Transformation"]
-    D -->|File Processing| G["File-Based Processing"]
-    E --> H["Tool Result"]
+    A[Incoming Natural-Language Message] --> B[Parent Agent]
+    B --> C[Structured Classification]
+    C --> D{Route}
+    D -->|sql| E[SQL Analyst Graph]
+    D -->|etl| F[ETL Analyst Graph]
+    D -->|rag| G[RAG Analyst Graph]
+    E --> H[Specialist Answer]
     F --> H
     G --> H
-    H --> I["LLM Response Synthesis"]
-    I --> J["Final ETL Result"]
+    H --> I[Parent Response State]
+    I --> J[Streamlit Chat UI]
 ```
 
 ### RAG Data Flow
@@ -221,61 +240,34 @@ Run the UI with:
 uv run streamlit run app.py
 ```
 
-> The Data Agent currently uses the configured MEDIUM model tier for routing. The model-status panel can test all configured tiers independently.
+### Existing graph visualizations
 
-## Gemini Model Handling
+The repository includes generated visualizations for the existing parent and specialist graphs:
 
-Gemini configuration is centralized in [utils/llm_pick.py](utils/llm_pick.py).
+| Graph | Preview |
+|---|---|
+| Parent Data Agent | [`data_agent_graph.png`](data_agent_graph.png) |
+| SQL Analyst | [`sql_analyst_graph.png`](sql_analyst_graph.png) |
+| ETL Analyst | [`etl_analyst_graph.png`](etl_analyst_graph.png) |
 
-The application defines three logical tiers:
+The Mermaid diagrams above document the high-level platform and RAG flow. The RAG workflow is implemented in code; a generated RAG graph image is not currently listed among the repository's graph PNGs.
 
-- `LOW`
-- `MEDIUM`
-- `HIGH`
+## Technology Stack
 
-The LLM factory supports centralized configuration, API-key fallback, structured output, tool-enabled models, retries, and fallback handling for quota, rate-limit, unavailable-model, and temporary service errors.
+- **Language:** Python 3.12+
+- **Agent orchestration:** LangGraph
+- **LLM and embeddings:** Google Gemini through LangChain integrations
+- **Agent framework:** LangChain
+- **Structured database:** PostgreSQL, `psycopg2`
+- **Vector database:** Chroma with persistent local storage
+- **Document ingestion:** LangChain Community loaders, PyPDF, text splitters
+- **ETL and data processing:** Requests, Pandas
+- **UI:** Streamlit
+- **State and validation:** Pydantic / typed graph state
+- **Configuration:** python-dotenv
+- **Logging:** Python logging with rotating file output
 
-## Logging and Observability
-
-Centralized logging is configured through [logging_config.py](logging_config.py).
-
-It provides:
-
-- console logging,
-- rotating `logs/app.log`,
-- 5 MB rotation threshold,
-- up to 3 backup files,
-- consistent timestamp/level/logger/message formatting,
-- reduced verbosity for noisy third-party libraries.
-
-## Data Model
-
-The PostgreSQL database is structured around a ride-sharing and stakeholder intelligence domain:
-
-- users
-- vehicles
-- rides
-- payments
-- ratings
-
-These datasets support analysis of rider behavior, driver activity, trip performance, payments, and ratings.
-
-## Tech Stack
-
-- Python 3.12+
-- PostgreSQL
-- psycopg2
-- LangChain
-- LangGraph
-- Google Gemini via LangChain Google GenAI
-- Streamlit
-- Pandas
-- Requests
-- Pydantic
-- python-dotenv
-- Python rotating-file logging
-
-## Project Structure
+## Repository Layout
 
 ```text
 .
@@ -294,15 +286,16 @@ These datasets support analysis of rider behavior, driver activity, trip perform
 ├── scripts/
 │   └── generate_graphs.py
 ├── data/
-│   └── load/
-│       ├── payments.csv
-│       ├── ratings.csv
-│       ├── rides.csv
-│       ├── users.csv
-│       └── vehicles.csv
+│   └── load/                 # Seed CSV files for PostgreSQL
+├── knowledge_base/
+│   ├── documents/            # Add .md, .txt, and .pdf source documents here
+│   └── chroma_db/            # Persistent local Chroma index
 ├── models/
-│   ├── __init__.py
-│   └── schema.py
+│   └── schema.py             # Pydantic and routing schemas
+├── rag/
+│   ├── ingest.py             # Load, split, and index documents
+│   ├── retriever.py          # Similarity retrieval helpers
+│   └── vector_store.py       # Gemini embedding and Chroma configuration
 ├── utils/
 │   ├── data/
 │   │   └── extract/
@@ -323,139 +316,157 @@ These datasets support analysis of rider behavior, driver activity, trip perform
 ├── etl_analyst_graph.png
 ├── rag_agent_graph.png
 ├── sql_analyst_graph.png
-└── uv.lock
+├── etl_analyst_graph.png
+├── pyproject.toml
+├── uv.lock
+└── README.md
 ```
 
-## Setup
+## Getting Started
 
 ### Prerequisites
 
-- Python 3.12+
-- PostgreSQL
-- Gemini API key
-- PostgreSQL credentials
+- Python 3.12 or later
+- PostgreSQL instance and credentials for SQL/ETL features that use the database
+- Google AI API key(s) required by your configured Gemini model and embedding integrations
+- Git
 
-### Environment
+### 1. Clone the repository
 
-Create `.env`:
+```bash
+git clone https://github.com/swapniltake1/agentic-data-intelligence-platform.git
+cd agentic-data-intelligence-platform
+```
+
+### 2. Create and configure environment variables
+
+Create a `.env` file in the project root. Keep real credentials out of source control.
 
 ```env
+# PostgreSQL — required for database-backed workflows
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=your_database_name
 DB_USER=your_postgres_user
 DB_PASSWORD=your_postgres_password
-GEMINI_API_KEY=your_gemini_api_key
 
-# Optional fallback
-# GOOGLE_API_KEY=your_google_api_key
+# Gemini / Google AI
+GEMINI_API_KEY=your_gemini_api_key
+GOOGLE_API_KEY=your_google_api_key
+
+# Optional RAG configuration
+# RAG_COLLECTION_NAME=ola_knowledge
+# GOOGLE_EMBEDDING_MODEL=gemini-embedding-001
 ```
 
-### Install
+The RAG embedding factory currently reads `GOOGLE_API_KEY`. Configure the key according to the model and LangChain integration you are using. Never commit a real key.
+
+### 3. Install dependencies
+
+Using `uv` (recommended when available):
+
+```bash
+uv sync
+```
+
+Or install the project dependencies with pip:
 
 ```bash
 python -m pip install -e .
 ```
 
-For reproducible dependency resolution, the repository also contains `uv.lock`.
+### 4. Prepare the PostgreSQL data (SQL workflows)
 
-## Database Setup
-
-Run:
+Review the database configuration and CSV inputs, then run:
 
 ```bash
-python utils/feed_db.py
+uv run python utils/feed_db.py
 ```
 
-This creates the required tables, loads the CSV files from `data/load/`, validates row counts, and commits the changes.
+Use your configured environment and database permissions. Skip this step if you only intend to experiment with the document RAG path.
 
-## Running the Project
+### 5. Add and index knowledge-base documents (RAG)
 
-To run the Streamlit app, use:
+Place your source files under `knowledge_base/documents/`. Supported extensions are:
+
+- `.md` — Markdown
+- `.txt` — UTF-8 text
+- `.pdf` — PDF documents
+
+Build or rebuild the local vector index:
+
+```bash
+uv run python -m rag.ingest
+```
+
+The ingestion script loads the supported files, splits content into chunks (1,000 characters with 150 characters of overlap), creates deterministic chunk IDs, and indexes the chunks in the persistent Chroma collection at `knowledge_base/chroma_db/`.
+
+**Note:** Re-running ingestion rebuilds the configured collection by deleting its existing entries before indexing the current document set. Back up the directory or use a separate collection if you need to preserve an existing index.
+
+### 6. Launch the application
 
 ```bash
 uv run streamlit run app.py
 ```
 
-The top-level runtime entry point is still minimal:
+Then open the local URL printed by Streamlit. You can ask for SQL-backed analysis, ETL operations, or questions about the indexed documents.
 
-```bash
-streamlit run app.py
-```
+## How to Use the RAG Feature
 
-### Parent Data Agent
+1. Add relevant business or domain documents to `knowledge_base/documents/`.
+2. Set the Google AI key used by the embedding integration.
+3. Run the ingestion command to build the Chroma index.
+4. Launch the Streamlit application.
+5. Ask a natural-language question about the indexed material. The parent agent should route document-knowledge questions to the RAG specialist.
 
-```bash
-python agents/data_agent.py
-```
+The RAG agent uses similarity retrieval with a default `top_k` of 4. Retrieved text is passed as evidence to the response model; the prompt instructs the model to avoid unsupported claims and to state when the available context is insufficient. This does not replace testing retrieval quality or verifying important answers.
 
-### SQL Analyst
+## Configuration Notes
 
-```bash
-python agents/sql_analyst.py
-```
+- Gemini model-tier configuration is centralized in `utils/llm_pick.py`.
+- The parent router is configured with the project's medium-tier base LLM.
+- RAG response generation uses the configured medium-tier model.
+- The RAG embedding model defaults to `gemini-embedding-001`; override with `GOOGLE_EMBEDDING_MODEL` if needed.
+- The Chroma collection defaults to `ola_knowledge`; override with `RAG_COLLECTION_NAME`.
+- The Chroma index is stored locally under `knowledge_base/chroma_db/`.
 
-The SQL and ETL modules generate their LangGraph PNG visualizations only when run directly; importing them from the Streamlit app does not run their `__main__` blocks. The RAG and parent data agents do not generate graph images.
+## Logging and Observability
 
-## How the Agent Workflow Works
+Logging is configured through `logging_config.py` and is used across the application's agent workflows. The existing configuration supports console output and a rotating `logs/app.log` file, helping with troubleshooting without displaying detailed internal exceptions directly in the chat UI.
 
-```bash
-python agents/etl_analyst.py
-```
+Do not log secrets, API keys, passwords, or confidential document content.
 
-### Application Entry Point
+## Security and Operational Considerations
 
-```bash
-python main.py
-```
+- **SQL access:** generated SQL passes deterministic checks intended to allow only a single read-only `SELECT` or `WITH` query, followed by an LLM safety review before execution. Use a least-privilege PostgreSQL account as an additional control.
+- **ETL execution:** the ETL transformation utility uses Python `exec()`. Do not run untrusted or model-generated code in a production process without a restrictive sandbox and explicit controls.
+- **Credentials:** keep `.env` out of version control and rotate any credentials accidentally exposed.
+- **RAG quality:** retrieved content can be incomplete, outdated, or irrelevant. Keep knowledge documents curated and re-index after updates.
+- **Local vector data:** treat the Chroma directory as application data; protect it according to the sensitivity of the indexed documents.
+- **Production readiness:** authentication, authorization, isolation, automated evaluation, and comprehensive tests should be added before exposing the platform to untrusted users.
 
-## Security Notes
-
-The SQL workflow enforces read-only safety checks and rejects data modification, schema-changing, transaction-control, multi-statement, dangerous-function, and comment-obfuscation patterns.
-
-The ETL code-execution utility currently uses Python `exec()` for transformation execution. This is **not production-safe for untrusted or LLM-generated code** and should be isolated or sandboxed before production use.
-
-Frontend exceptions are logged with technical details while the UI returns a generic failure message.
-
-## Current Status
+## Project Status
 
 ### Implemented
 
-- SQL Analyst LangGraph workflow
-- ETL Analyst LangGraph workflow
-- Parent Data Agent routing
-- PostgreSQL schema inspection and CSV loading
-- Deterministic SQL safety validation
-- LLM SQL safety review
-- Gemini model-tier configuration
-- Model fallback and retry handling
-- Streamlit chat interface
-- Suggested questions and new-chat handling
-- Model health testing
-- Response metadata
-- Centralized rotating application logging
-- User-facing error handling
+- [x] Parent LangGraph router for SQL, ETL, and RAG requests
+- [x] SQL Analyst workflow with deterministic checks and LLM safety review
+- [x] ETL Analyst workflow with API/file transformation tools
+- [x] RAG ingestion for Markdown, text, and PDF sources
+- [x] Text chunking and persistent Chroma indexing
+- [x] Similarity retrieval and context-grounded Gemini responses
+- [x] Streamlit conversational interface
+- [x] Centralized LLM configuration and application logging
 
-### Remaining Work
+### Potential next steps
 
-- More specialist agents
-- Secure sandbox for ETL code execution
-- Automated unit/integration tests
-- Production API and authentication
-- Stakeholder dashboards and reporting
-
-## Production Roadmap
-
-```mermaid
-flowchart LR
-    A["Current Platform"] --> B["Additional Specialist Agents"]
-    B --> C["Secure Tool Sandbox"]
-    C --> D["Automated Evaluation"]
-    D --> E["Authentication and API Layer"]
-    E --> F["Observability and Governance"]
-    F --> G["Production Stakeholder Intelligence Platform"]
-```
+- Add automated unit and integration tests for routing, ingestion, retrieval, and SQL validation
+- Add evaluation datasets for retrieval relevance and answer faithfulness
+- Add source/page citations to RAG responses where appropriate
+- Add a sandbox for ETL code execution
+- Introduce authentication, authorization, and deployment configuration
+- Add monitoring, traces, and stakeholder-facing reporting
 
 ## License
 
-This project does not currently include a license file.
+No license file is currently included. Unless a license is added to the repository, reuse and redistribution are not explicitly granted.
