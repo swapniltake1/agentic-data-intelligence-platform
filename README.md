@@ -176,6 +176,12 @@ This script will:
 
 ## Running the Project
 
+To run the Streamlit app, use:
+
+```bash
+uv run streamlit run app.py
+```
+
 The top-level runtime entry point is still minimal:
 
 ```bash
@@ -194,7 +200,7 @@ To run the ETL analyst graph directly:
 python agents/etl_analyst.py
 ```
 
-Both agent modules currently include executable examples under their `__main__` blocks. They also generate LangGraph PNG visualizations when the optional visualization code runs.
+The SQL and ETL modules generate their LangGraph PNG visualizations only when run directly; importing them from the Streamlit app does not run their `__main__` blocks. The RAG and parent data agents do not generate graph images.
 
 ## How the Agent Workflow Works
 
