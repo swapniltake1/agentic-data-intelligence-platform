@@ -34,13 +34,15 @@ load_dotenv(PROJECT_ROOT / ".env")
 
 # Database connection details are loaded from environment variables.
 # Sensitive values such as the password are never written to logs.
-DB_CONFIG = {
-    "host": os.environ["DB_HOST"],
-    "port": int(os.environ["DB_PORT"]),
-    "database": os.environ["DB_NAME"],
-    "user": os.environ["DB_USER"],
-    "password": os.environ["DB_PASSWORD"],
-}
+def get_db_config() -> dict[str, str | int]:
+    """Read database settings when a database operation is requested."""
+    return {
+        "host": os.environ["DB_HOST"],
+        "port": int(os.environ["DB_PORT"]),
+        "database": os.environ["DB_NAME"],
+        "user": os.environ["DB_USER"],
+        "password": os.environ["DB_PASSWORD"],
+    }
 
 # Directory used for CSV/data files.
 CSV_DIR = os.getenv("CSV_DIR", "data")

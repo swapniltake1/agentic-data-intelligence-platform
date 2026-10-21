@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 import sys
+from functools import lru_cache
 from typing import Annotated, Any, TypedDict
 
 # Ensure the project root is importable when this module is run directly.
@@ -35,9 +36,13 @@ class DataAgentSchema(TypedDict):
 
 
 logger.info("Initializing Data Agent")
-llm = get_base_llm("medium")
-agent_router = llm.with_structured_output(RouterSchema)
-logger.info("Data Agent router initialized")
+
+
+@lru_cache(maxsize=1)
+def _get_agent_router():
+    """Create the router only when a request needs an LLM."""
+    logger.info("Initializing Data Agent router")
+    return get_base_llm("medium").with_structured_output(RouterSchema)
 
 
 def _last_user_text(state: DataAgentSchema) -> str:
@@ -125,7 +130,7 @@ def router_node(state: DataAgentSchema) -> dict:
     logger.info("Router started")
     try:
         user_message = _last_user_text(state)
-        result = agent_router.invoke(user_message)
+        result = _get_agent_router().invoke(user_message)
         route = _structured_value(result, "answer")
 
         if not isinstance(route, str):
@@ -186,14 +191,14 @@ def route_edge(state: DataAgentSchema) -> str:
 
 
 # Build the parent graph.
-data_agent_graph = StateGraph(DataAgentSchema)
-data_agent_graph.add_node("router_node", router_node)
-data_agent_graph.add_node("sql_agent", lambda state: _invoke_child_agent(state, "sql"))
-data_agent_graph.add_node("etl_agent", lambda state: _invoke_child_agent(state, "etl"))
-data_agent_graph.add_node("rag_agent", lambda state: _invoke_child_agent(state, "rag"))
+data_agent_builder = StateGraph(DataAgentSchema)
+data_agent_builder.add_node("router_node", router_node)
+data_agent_builder.add_node("sql_agent", lambda state: _invoke_child_agent(state, "sql"))
+data_agent_builder.add_node("etl_agent", lambda state: _invoke_child_agent(state, "etl"))
+data_agent_builder.add_node("rag_agent", lambda state: _invoke_child_agent(state, "rag"))
 
-data_agent_graph.add_edge(START, "router_node")
-data_agent_graph.add_conditional_edges(
+data_agent_builder.add_edge(START, "router_node")
+data_agent_builder.add_conditional_edges(
     "router_node",
     route_edge,
     {
@@ -202,9 +207,10 @@ data_agent_graph.add_conditional_edges(
         "rag": "rag_agent",
     },
 )
-data_agent_graph.add_edge("sql_agent", END)
-data_agent_graph.add_edge("etl_agent", END)
-data_agent_graph.add_edge("rag_agent", END)
+data_agent_builder.add_edge("sql_agent", END)
+data_agent_builder.add_edge("etl_agent", END)
+data_agent_builder.add_edge("rag_agent", END)
 
-data_agent = data_agent_graph.compile()
+data_agent_graph = data_agent_builder.compile()
+data_agent = data_agent_graph
 logger.info("Data Agent graph compiled successfully")

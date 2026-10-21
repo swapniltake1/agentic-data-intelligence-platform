@@ -1,25 +1,40 @@
 # Agentic Data Intelligence Platform
 
-<p align="center">
-  <strong>Natural-language access to structured data, ETL workflows, and document knowledge</strong>
-  <br />
-  A multi-agent platform powered by LangGraph, Google Gemini, PostgreSQL, Chroma, and Streamlit.
-</p>
-
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white" />
-  <img alt="LangGraph" src="https://img.shields.io/badge/Orchestration-LangGraph-1C3C3C" />
-  <img alt="LLM" src="https://img.shields.io/badge/LLM-Google%20Gemini-4285F4?logo=google&logoColor=white" />
-  <img alt="Database" src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?logo=postgresql&logoColor=white" />
-  <img alt="Vector store" src="https://img.shields.io/badge/Vector%20Store-Chroma-6C47FF" />
-  <img alt="UI" src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white" />
-</p>
-
----
+A Python-based, agent-driven data intelligence platform for turning natural-language questions into actionable results across SQL analytics, ETL, and document-grounded RAG workflows. The system combines LLM-based reasoning, LangGraph orchestration, deterministic SQL safety validation, PostgreSQL schema introspection, API/file-based ETL tools, a persistent Chroma knowledge base, centralized logging, and a Streamlit chat interface.
 
 ## Overview
 
-The **Agentic Data Intelligence Platform** is a conversational interface for asking questions across structured business data, extraction/transformation workflows, and document-based knowledge. A parent agent classifies each request and delegates it to a specialist workflow, so users can work in natural language instead of manually coordinating individual tools.
+This project is designed to help users interact with transportation and payments data using natural language instead of writing SQL or manually coordinating ETL steps.
+
+The platform currently provides three specialist workflows:
+
+- **SQL Analyst** — interprets a business question, uses PostgreSQL schema metadata and sample data to generate SQL, validates that the query is safe and read-only, executes the approved query, and produces a final answer.
+- **ETL Analyst** — selects extraction and transformation tools for API/file workflows and returns the result to the agent.
+- **RAG Analyst** — retrieves relevant chunks from the persistent document knowledge base and uses the retrieved context to produce a grounded answer.
+- **Data Agent / Parent Router** — classifies an incoming request as `sql`, `etl`, or `rag` and routes it to the appropriate specialist workflow.
+- **Streamlit UI** — provides a ChatGPT-style interface for interacting with the Data Agent, including chat history, suggested questions, analyst/model metadata, model health checks, and user-friendly error handling.
+- **Centralized logging** — application activity is written to both the console and a rotating `logs/app.log` file.
+
+## Key Features
+
+- Natural-language-to-SQL workflow
+- Parent agent that routes requests to SQL, ETL, or RAG specialists
+- Deterministic read-only SQL safety validation before execution
+- Structured LLM judge for an additional SQL safety review
+- PostgreSQL schema introspection and sample-data context
+- CSV-driven PostgreSQL database population
+- API extraction and Pandas transformation tools for ETL workflows
+- Markdown, TXT, and PDF ingestion with persistent Chroma retrieval for RAG
+- Gemini model tiers with centralized configuration
+- Model fallback handling for unavailable/rate-limited models
+- Retry handling for temporary service/server failures
+- Streamlit chat interface with conversation history
+- Suggested business questions from the welcome screen
+- Live model status checks for configured Gemini tiers
+- Response metadata showing analyst, model tier, and execution time
+- Safe frontend error messages while detailed errors are retained in logs
+- Centralized rotating file logging for application diagnostics
+- Structured Pydantic agent state models
 
 The platform currently supports three specialist paths:
 
@@ -27,23 +42,51 @@ The platform currently supports three specialist paths:
 - **ETL Analyst** — selects extraction and transformation tools for API- and file-based workflows.
 - **RAG Analyst** — retrieves relevant chunks from a local Chroma vector store and uses the retrieved context to generate an answer grounded in the configured knowledge base.
 
-A Streamlit chat UI provides the interaction layer, while LangGraph coordinates request routing and specialist execution.
+```mermaid
+flowchart LR
+    U["User"] --> UI["Streamlit Chat UI"]
+    UI --> P["Parent Data Agent"]
+    P --> R{"Request Router"}
+    R -->|SQL| S["SQL Analyst"]
+    R -->|ETL| E["ETL Analyst"]
+    R -->|RAG| G["RAG Analyst"]
+    S --> DB["PostgreSQL"]
+    S --> Q["SQL Safety Validation"]
+    Q --> J["LLM Safety Judge"]
+    J --> DB
+    E --> API["External APIs"]
+    E --> FILE["Files / Pandas"]
+    G --> CHROMA["Persistent Chroma Store"]
+    P --> LLM["Gemini Model Layer"]
+    S --> LLM
+    E --> LLM
+    G --> LLM
+    P --> LOG["Centralized Logging"]
+    S --> LOG
+    E --> LOG
+    UI --> LOG
+```
 
-## Capabilities
+### LangGraph Orchestration
 
-| Capability | What it does |
-|---|---|
-| Multi-agent routing | Classifies questions as `sql`, `etl`, or `rag` and invokes the selected specialist |
-| Natural-language SQL | Turns business questions into PostgreSQL queries using schema-aware context |
-| SQL guardrails | Rejects unsafe or non-read-only SQL before execution, followed by an LLM review |
-| Retrieval-Augmented Generation | Retrieves semantically similar document chunks and supplies them to the LLM as answer context |
-| Document ingestion | Loads Markdown, text, and PDF files, splits them into chunks, and indexes them in Chroma |
-| ETL tooling | Supports API extraction and file/Pandas transformation workflows |
-| Gemini integration | Centralizes model configuration and supports the project's configured retry/fallback handling |
-| Conversational UI | Offers a ChatGPT-style Streamlit chat experience with session-based conversation history |
-| Operational logs | Writes application diagnostics to the console and rotating log files |
+The parent diagram represents the compiled graph in `agents/data_agent.py`: its conditional edges select one specialist node and then end the run. The RAG workflow is a separate compiled graph with one node; query-time retrieval and response generation happen inside that node.
 
-## Architecture
+```mermaid
+flowchart TD
+    P_START(["START"]) --> router_node["router_node"]
+    router_node -->|sql| sql_agent["sql_agent"]
+    router_node -->|etl| etl_agent["etl_agent"]
+    router_node -->|rag| rag_agent["rag_agent"]
+    sql_agent --> P_END(["END"])
+    etl_agent --> P_END
+    rag_agent --> P_END
+```
+
+```mermaid
+flowchart TD
+    R_START(["START"]) --> rag_llm_node["rag_llm_node"]
+    rag_llm_node --> R_END(["END"])
+```
 
 ### End-to-end platform architecture
 
@@ -98,46 +141,103 @@ flowchart TD
     I --> J[Streamlit Chat UI]
 ```
 
-### RAG ingestion and retrieval workflow
+### RAG Data Flow
+
+Ingestion and query-time retrieval are implemented in Python functions called by the RAG workflow; they are not separate LangGraph nodes.
 
 ```mermaid
 flowchart LR
-    subgraph Indexing["Offline / On-demand indexing"]
-        DOCS[knowledge_base/documents<br/>Markdown, TXT, PDF] --> LOAD[Document Loaders]
-        LOAD --> SPLIT[Recursive Character Splitter<br/>1000 chars / 150 overlap]
-        SPLIT --> EMBED[Gemini Embeddings]
-        EMBED --> STORE[(Persistent Chroma Collection)]
+    subgraph Ingestion["Document ingestion (rag/ingest.py)"]
+        DOCS["Markdown / TXT / PDF documents"]
+        LOAD["Document loaders"]
+        SPLIT["Recursive text splitting<br/>chunk size: 1,000 characters<br/>overlap: 150 characters"]
+        EMBED["Gemini embeddings"]
+        CHROMA["Persistent Chroma vector store"]
+        DOCS --> LOAD --> SPLIT --> EMBED --> CHROMA
     end
 
-    subgraph QueryTime["Question answering"]
-        Q[User Question] --> ROUTE[Parent Agent routes to RAG]
-        ROUTE --> RET[Similarity Search<br/>Top 4 chunks]
-        STORE --> RET
-        RET --> CTX[Retrieved Context]
-        CTX --> LLM[Gemini Response Generation]
-        Q --> LLM
-        LLM --> ANSWER[Context-grounded Answer]
+    subgraph Query["Query time (inside rag_llm_node)"]
+        QUESTION["User question"]
+        SEARCH["Similarity search<br/>default top-k: 4"]
+        CONTEXT["Retrieved context"]
+        RESPONSE["Gemini response generation"]
+        ANSWER["Final answer"]
+        QUESTION --> SEARCH --> CONTEXT --> RESPONSE --> ANSWER
     end
+
+    CHROMA --> SEARCH
 ```
 
-The ingestion job rebuilds the configured Chroma collection from the documents directory. At query time, the RAG agent retrieves up to four similar chunks, combines them into context, and asks the configured Gemini model to answer. When the retrieved context is empty or insufficient, the agent is designed to report that limitation rather than intentionally invent unsupported facts.
-
-### Guarded SQL workflow
+### Observability Flow
 
 ```mermaid
-flowchart TD
-    A[Business Question] --> B[Curate Question]
-    B --> C[Load PostgreSQL Schema Context]
-    C --> D[Generate SQL]
-    D --> E{Deterministic Validation}
-    E -->|Rejected| X[Stop / Return Safely]
-    E -->|Passed| F[LLM Safety Review]
-    F --> G{Approved?}
-    G -->|No| X
-    G -->|Yes| H[Pre-execution Validation]
-    H --> I[(PostgreSQL)]
-    I --> J[Interpret Results]
-    J --> K[Final Answer]
+flowchart LR
+    UI["Streamlit UI"] --> APP["Application"]
+    APP --> AGENTS["Agent Workflows"]
+    AGENTS --> MODEL["Gemini Models"]
+    AGENTS --> DB["PostgreSQL"]
+    AGENTS --> ETL["ETL Tools"]
+    AGENTS --> RAG["RAG Retrieval"]
+    RAG --> CHROMA["Persistent Chroma Store"]
+    APP --> LOG["Rotating logs/app.log"]
+    AGENTS --> LOG
+    MODEL --> LOG
+    DB --> LOG
+    ETL --> LOG
+    LOG --> OPS["Diagnostics / Troubleshooting"]
+```
+
+### Architecture Notes
+
+- **Streamlit** is the user-facing interaction layer.
+- **Data Agent** provides top-level routing and orchestration.
+- **SQL Analyst** handles schema-aware analytical requests.
+- **ETL Analyst** handles extraction and transformation requests.
+- **RAG Analyst** retrieves indexed document chunks and generates grounded responses.
+- **LangGraph** manages the stateful specialist workflows.
+- **Gemini** provides routing, reasoning, SQL generation, safety review, embeddings, and response synthesis.
+- **PostgreSQL** provides structured source data and schema metadata.
+- **Chroma** persists document embeddings and supports similarity retrieval. Ingestion uses 1,000-character chunks with 150-character overlap; query-time retrieval defaults to the top 4 chunks.
+- **RAG ingestion and retrieval** are operations inside the ingestion workflow and `rag_llm_node`, not separate nodes in the RAG LangGraph.
+- **Deterministic SQL validation** is the first safety boundary before database execution.
+- **LLM safety judging** provides a second review layer for generated SQL.
+- **Centralized logging** captures operational events without exposing API credentials.
+
+### Graph Visualizations
+
+The repository includes PNGs rendered from the compiled LangGraph definitions:
+
+- [Parent Data Agent graph](data_agent_graph.png)
+- [SQL Analyst graph](sql_analyst_graph.png)
+- [ETL Analyst graph](etl_analyst_graph.png)
+- [RAG Analyst graph](rag_agent_graph.png)
+
+Regenerate all four images from the repository root with:
+
+```bash
+uv run python scripts/generate_graphs.py
+```
+
+The renderer uses LangChain's installed Mermaid PNG API; no additional Python package is required. Rendering requires network access to the Mermaid rendering service. Graph generation imports and compiles the agents but does not invoke LLMs, connect to PostgreSQL, run ETL tools, or ingest documents.
+
+## Streamlit User Interface
+
+The Streamlit application in [app.py](app.py) provides:
+
+- ChatGPT-style conversation flow
+- New Chat and session-based history
+- Suggested business questions
+- Access to SQL, ETL, and RAG workflows through the Data Agent
+- Gemini LOW, MEDIUM, and HIGH model status
+- Test All Models functionality
+- Analyst/model/execution-time response metadata
+- User-friendly error handling
+- Custom responsive application styling
+
+Run the UI with:
+
+```bash
+uv run streamlit run app.py
 ```
 
 ### Existing graph visualizations
@@ -172,10 +272,19 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 ```text
 .
 ├── agents/
-│   ├── data_agent.py         # Parent router for SQL, ETL, and RAG
-│   ├── sql_analyst.py        # Guarded natural-language-to-SQL workflow
-│   ├── etl_analyst.py        # ETL specialist workflow
-│   └── rag_agent.py          # Retrieval-grounded answer generation
+│   ├── __init__.py
+│   ├── data_agent.py
+│   ├── etl_analyst.py
+│   ├── rag_agent.py
+│   ├── scratch.py
+│   └── sql_analyst.py
+├── rag/
+│   ├── __init__.py
+│   ├── ingest.py
+│   ├── retriever.py
+│   └── vector_store.py
+├── scripts/
+│   └── generate_graphs.py
 ├── data/
 │   └── load/                 # Seed CSV files for PostgreSQL
 ├── knowledge_base/
@@ -188,15 +297,24 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 │   ├── retriever.py          # Similarity retrieval helpers
 │   └── vector_store.py       # Gemini embedding and Chroma configuration
 ├── utils/
-│   ├── database.py           # PostgreSQL access and schema utilities
-│   ├── etl_tools.py          # ETL tools
-│   ├── feed_db.py            # Database/CSV setup
-│   └── llm_pick.py           # LLM configuration helpers
-├── app.py                    # Streamlit chat UI
-├── main.py                   # Lightweight application entry point
-├── logging_config.py         # Centralized logging configuration
-├── schema_info.txt           # Schema reference
+│   ├── data/
+│   │   └── extract/
+│   ├── database.py
+│   ├── etl_tools.py
+│   ├── feed_db.py
+│   ├── graph_visualization.py
+│   └── llm_pick.py
+├── logs/
+│   └── app.log
+├── app.py
+├── logging_config.py
+├── main.py
+├── pyproject.toml
+├── README.md
+├── schema_info.txt
 ├── data_agent_graph.png
+├── etl_analyst_graph.png
+├── rag_agent_graph.png
 ├── sql_analyst_graph.png
 ├── etl_analyst_graph.png
 ├── pyproject.toml
