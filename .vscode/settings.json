@@ -4,5 +4,6 @@
     "CodeGPT.apiKey": "CodeGPT Plus Beta",
     "python.analysis.extraPaths": [
         "${workspaceFolder}"
-    ]
+    ],
+    "python.terminal.useEnvFile": true
 }

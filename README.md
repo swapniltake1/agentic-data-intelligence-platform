@@ -310,7 +310,13 @@ This creates the required tables, loads the CSV files from `data/load/`, validat
 
 ## Running the Project
 
-### Streamlit
+To run the Streamlit app, use:
+
+```bash
+uv run streamlit run app.py
+```
+
+The top-level runtime entry point is still minimal:
 
 ```bash
 streamlit run app.py
@@ -328,7 +334,9 @@ python agents/data_agent.py
 python agents/sql_analyst.py
 ```
 
-### ETL Analyst
+The SQL and ETL modules generate their LangGraph PNG visualizations only when run directly; importing them from the Streamlit app does not run their `__main__` blocks. The RAG and parent data agents do not generate graph images.
+
+## How the Agent Workflow Works
 
 ```bash
 python agents/etl_analyst.py
