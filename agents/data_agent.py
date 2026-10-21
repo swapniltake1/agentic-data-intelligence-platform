@@ -22,7 +22,7 @@ from agents.rag_agent import rag_node
 from agents.sql_analyst import sql_analyst
 from logging_config import setup_logging
 from models.schema import RouterSchema
-from utils.llm_pick import get_base_llm
+from utils.llm_pick import pick_llm
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ logger.info("Initializing Data Agent")
 def _get_agent_router():
     """Create the router only when a request needs an LLM."""
     logger.info("Initializing Data Agent router")
-    return get_base_llm("medium").with_structured_output(RouterSchema)
+    return pick_llm("medium", output_schema=RouterSchema)
 
 
 def _last_user_text(state: DataAgentSchema) -> str:

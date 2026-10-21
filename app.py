@@ -1,4 +1,5 @@
 import logging
+import json
 import time
 import uuid
 from datetime import datetime
@@ -8,6 +9,19 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from logging_config import setup_logging
 from agents.data_agent import data_agent
+from utils.api_processing import (
+    APIProcessingError,
+    SUPPORTED_OUTPUTS,
+    capture_api_download,
+    process_api_to_download,
+)
+from utils.llm_pick import (
+    LLMConfigurationError,
+    capture_llm_metadata,
+    get_provider_status,
+    test_provider,
+)
+from utils.ui_errors import safe_agent_error_message
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -218,16 +232,8 @@ def get_safe_error_message(exception: Exception) -> str:
 
     error_type = type(exception).__name__
 
-    logger.error(
-        "Agent request failed [%s]: %s",
-        error_type,
-        exception,
-    )
-
-    return (
-        "I couldn't complete your request right now. "
-        "Please try again."
-    )
+    logger.error("Agent request failed [%s]", error_type)
+    return safe_agent_error_message(exception)
 
 # ============================================================
 # Conversation State
@@ -273,6 +279,200 @@ def active_messages():
 # ============================================================
 
 with st.sidebar:
+    with st.expander("Process API data", expanded=False):
+        st.caption(
+            "Fetch JSON, apply AI processing instructions, and prepare a "
+            "downloadable file. Temporary job files are removed before download."
+        )
+        with st.form("api_processing_form", clear_on_submit=False):
+            api_url = st.text_input("API URL", key="api_processing_url")
+            api_params_text = st.text_area(
+                "Query parameters (JSON object)",
+                value="{}",
+                key="api_processing_params",
+            )
+            api_headers_text = st.text_area(
+                "Request headers (JSON object)",
+                value="{}",
+                key="api_processing_headers",
+            )
+            auth_type = st.selectbox(
+                "Authentication",
+                ["None", "Bearer token", "Basic authentication"],
+                key="api_processing_auth_type",
+            )
+            bearer_token = ""
+            basic_username = ""
+            basic_password = ""
+            if auth_type == "Bearer token":
+                bearer_token = st.text_input(
+                    "Bearer token",
+                    type="password",
+                    key="api_processing_bearer",
+                )
+            elif auth_type == "Basic authentication":
+                basic_username = st.text_input(
+                    "Username",
+                    key="api_processing_basic_username",
+                )
+                basic_password = st.text_input(
+                    "Password",
+                    type="password",
+                    key="api_processing_basic_password",
+                )
+            api_instructions = st.text_area(
+                "Filtering / cleaning instructions",
+                key="api_processing_instructions",
+            )
+            api_format = st.selectbox(
+                "Output format",
+                list(SUPPORTED_OUTPUTS),
+                key="api_processing_format",
+            )
+            api_filename = st.text_input(
+                "Download filename",
+                value="processed_data",
+                key="api_processing_filename",
+            )
+            process_api = st.form_submit_button(
+                "Fetch and process API data",
+                use_container_width=True,
+            )
+
+        if process_api:
+            st.session_state.pop("api_download", None)
+            try:
+                params = json.loads(api_params_text)
+                headers = json.loads(api_headers_text)
+                if not isinstance(params, dict) or not isinstance(headers, dict):
+                    raise APIProcessingError(
+                        "Query parameters and headers must be JSON objects."
+                    )
+                if auth_type == "Bearer token":
+                    if not bearer_token.strip():
+                        raise APIProcessingError("Enter a bearer token.")
+                    headers["Authorization"] = f"Bearer {bearer_token.strip()}"
+                    auth = None
+                elif auth_type == "Basic authentication":
+                    if not basic_username or not basic_password:
+                        raise APIProcessingError(
+                            "Enter both a username and password."
+                        )
+                    auth = (basic_username, basic_password)
+                else:
+                    auth = None
+
+                with st.status("Preparing API request…", expanded=True) as status:
+                    artifact = process_api_to_download(
+                        api_url,
+                        params=params,
+                        headers=headers,
+                        auth=auth,
+                        output_format=api_format,
+                        instructions=api_instructions,
+                        filename=api_filename,
+                        progress=lambda message: status.update(
+                            label=message, state="running"
+                        ),
+                    )
+                    status.update(label="Processed file is ready.", state="complete")
+                st.session_state.api_download = {
+                    "data": artifact.data,
+                    "filename": artifact.filename,
+                    "mime_type": artifact.mime_type,
+                    "record_count": artifact.record_count,
+                }
+                st.success(
+                    f"Processed {artifact.record_count} record(s). "
+                    "Your download is ready."
+                )
+            except (json.JSONDecodeError, APIProcessingError) as exc:
+                st.error(str(exc) if isinstance(exc, APIProcessingError) else
+                         "Query parameters and headers must be valid JSON objects.")
+            except Exception as exc:
+                logger.error(
+                    "API processing UI failed (error_type=%s)",
+                    type(exc).__name__,
+                )
+                st.error(
+                    "API processing failed. Check the endpoint, credentials, "
+                    "and AI provider availability."
+                )
+
+        api_download = st.session_state.get("api_download")
+        if api_download:
+            st.download_button(
+                "Download processed file",
+                data=api_download["data"],
+                file_name=api_download["filename"],
+                mime=api_download["mime_type"],
+                key="api_processed_download",
+                use_container_width=True,
+            )
+
+    st.markdown("## AI Providers")
+    try:
+        provider_status = get_provider_status()
+    except LLMConfigurationError:
+        logger.error("Invalid LLM provider configuration in status panel")
+        provider_status = []
+        st.error(
+            "Provider settings are invalid. Check LLM_PROVIDER_PRIORITY "
+            "and free-model configuration."
+        )
+    priority = " → ".join(
+        item["provider"]
+        for item in provider_status
+        if item["priority_enabled"]
+    )
+    if priority:
+        st.caption(f"Request priority: {priority}")
+
+    for provider in provider_status:
+        configuration = "configured" if provider["configured"] else "API key missing"
+        free_status = (
+            "free-tier model configured"
+            if provider["free_tier_configured"]
+            else "free-tier use not confirmed"
+        )
+        priority_mark = "priority" if provider["priority_enabled"] else "not in priority"
+        st.caption(
+            f"**{provider['provider'].title()}** · {provider['model']} · "
+            f"{configuration} · {free_status} · {priority_mark}"
+        )
+    st.caption(
+        "Free-tier status reflects model configuration only; confirm account "
+        "quotas and billing with the provider."
+    )
+
+    if st.button("Test All Providers", use_container_width=True):
+        st.session_state.provider_health = [
+            test_provider(provider["provider"])
+            for provider in provider_status
+        ]
+
+    for result in st.session_state.get("provider_health", []):
+        if result["healthy"]:
+            st.caption(
+                f"{result['provider'].title()}: healthy · "
+                f"{result['latency_ms']} ms · {result['model']}"
+            )
+        else:
+            st.caption(
+                f"{result['provider'].title()}: unavailable · "
+                f"{result['error']} · {result['model']}"
+            )
+
+    selected_provider = st.session_state.get("last_llm_metadata")
+    if selected_provider:
+        st.caption(
+            "Last request: "
+            f"{selected_provider['provider'].title()} / "
+            f"{selected_provider['model']} "
+            f"(tier {selected_provider['tier']})"
+        )
+
+    st.divider()
     st.markdown("## 💬 Chats")
 
     if st.button("＋  New chat", use_container_width=True, key="new_chat_button"):
@@ -337,13 +537,25 @@ if user_input and user_input.strip():
         try:
             with st.spinner("Thinking..."):
                 start_time = time.perf_counter()
-                result = data_agent.invoke(
-                    {
-                        "messages": [HumanMessage(content=user_input)],
-                        "route_response": "",
-                    },
-                    config={"recursion_limit": AGENT_RECURSION_LIMIT},
-                )
+                with capture_api_download() as api_download_result:
+                    with capture_llm_metadata() as llm_metadata:
+                        result = data_agent.invoke(
+                            {
+                                "messages": [HumanMessage(content=user_input)],
+                                "route_response": "",
+                            },
+                            config={"recursion_limit": AGENT_RECURSION_LIMIT},
+                        )
+                if "artifact" in api_download_result:
+                    artifact = api_download_result["artifact"]
+                    st.session_state.api_download = {
+                        "data": artifact.data,
+                        "filename": artifact.filename,
+                        "mime_type": artifact.mime_type,
+                        "record_count": artifact.record_count,
+                    }
+                if llm_metadata:
+                    st.session_state.last_llm_metadata = llm_metadata.copy()
                 duration = time.perf_counter() - start_time
 
             if not isinstance(result, dict):

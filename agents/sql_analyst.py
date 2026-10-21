@@ -611,40 +611,14 @@ def is_safe_sql(
 
         except Exception as exc:
 
-            # Deterministic validation already confirmed
-            # that this is a read-only SELECT.
-            if (
-                deterministic_safe
-                and sql_query.upper().strip().startswith(
-                    "SELECT"
-                )
-            ):
-
-                state.is_safe = "Yes"
-
-                state.comments = (
-                    "Passed deterministic safety validation "
-                    f"(LLM judge unavailable: {exc})"
-                )
-
-                logger.warning(
-                    "SQL safety judge unavailable. "
-                    "Using deterministic validation."
-                )
-
-            else:
-
-                state.is_safe = "No"
-
-                state.comments = (
-                    "SQL safety judge failed. "
-                    f"Execution blocked. Error: {exc}"
-                )
-
-                logger.error(
-                    "SQL safety validation failed: %s",
-                    exc,
-                )
+            state.is_safe = "No"
+            state.comments = (
+                "SQL safety judge failed. Execution blocked."
+            )
+            logger.error(
+                "SQL safety validation failed closed (error_type=%s)",
+                type(exc).__name__,
+            )
 
         logger.info(
             "SQL safety validation completed"

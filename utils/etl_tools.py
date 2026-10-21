@@ -1,10 +1,7 @@
 import logging
-import os
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-import requests
 
 
 # ---------------------------------------------------------------------------
@@ -20,8 +17,7 @@ class ETLTools:
     Utility class for ETL-related operations.
 
     Provides functionality to:
-    - Extract data from APIs.
-    - Save extracted data as CSV, JSON, or Parquet.
+    - Process API data and save processed output as CSV, JSON, or Parquet.
     - Resolve input data files.
     - Load data for transformation context.
     - Execute generated transformation code.
@@ -197,14 +193,17 @@ class ETLTools:
         url: str,
         output_folder: str,
         format: str,
+        instructions: str = "",
     ):
         """
-        Extract data from an API endpoint and save it to the output folder.
+        Process API data and save only the processed result to the output folder.
 
         Args:
             url: API endpoint from which data is extracted.
-            output_folder: Destination folder for extracted data.
+            output_folder: Destination folder for processed data, relative to
+                the project root.
             format: Output format: csv, json, or parquet.
+            instructions: Optional filtering or cleaning instructions.
 
         Returns:
             str: Status message describing the operation result.
@@ -213,119 +212,49 @@ class ETLTools:
         logger.info("Starting API extraction")
 
         project_root = Path(__file__).resolve().parent.parent
-        output_folder = str(project_root / output_folder)
+        output_path = (project_root / output_folder).resolve()
+        if not output_path.is_relative_to(project_root):
+            return (
+                "Failed to process API data: output folder must be "
+                "inside the project."
+            )
+
+        from utils.api_processing import (
+            APIProcessingError,
+            process_api_to_download,
+        )
 
         try:
-            # Send GET request to the API.
-            # The URL itself is intentionally not logged because it may
-            # potentially contain sensitive query parameters.
-            response = requests.get(
+            artifact = process_api_to_download(
                 url,
-                timeout=30,
+                output_format=format,
+                instructions=instructions,
             )
-
-            response.raise_for_status()
-
-            logger.info("API request completed successfully")
-
-            # Parse API response as JSON.
-            payload = response.json()
-
-            # Normalize the API response into records.
-            records = self._get_records(payload)
-
-            logger.info(
-                "Extracted %d record(s) from API response",
-                len(records),
-            )
-
-            if not records:
-                logger.warning("No data found in API response")
-                return "No data found in the API response."
-
-            # Convert JSON records into a Pandas DataFrame.
-            df = pd.json_normalize(
-                records,
-                sep="_",
-            )
-
-            logger.debug(
-                "Created DataFrame with %d row(s) and %d column(s)",
-                len(df),
-                len(df.columns),
-            )
-
-            # Create output directory if it does not already exist.
-            os.makedirs(
-                output_folder,
-                exist_ok=True,
-            )
-
-            # Generate a timestamp-based output filename.
-            timestamp = datetime.now().strftime(
-                "%Y%m%d%H%M%S"
-            )
-
-            filename = os.path.join(
-                output_folder,
-                f"extract_{timestamp}.{format}",
-            )
-
-            # Save the extracted data using the requested format.
-            if format == "csv":
-                df.to_csv(
-                    filename,
-                    index=False,
-                )
-
-            elif format == "json":
-                df.to_json(
-                    filename,
-                    orient="records",
-                    lines=True,
-                )
-
-            elif format == "parquet":
-                df.to_parquet(
-                    filename,
-                    index=False,
-                )
-
-            else:
-                logger.warning(
-                    "Unsupported output format requested: %s",
-                    format,
-                )
-
-                return f"unsupported format: {format}"
-
-            logger.info(
-                "API extraction completed successfully"
-            )
-
-            logger.info(
-                "Extracted data saved successfully"
-            )
-
-            return (
-                f"Data successfully extracted and saved to {filename}"
-            )
-
-        except requests.exceptions.RequestException as e:
-            logger.error(
-                "API extraction failed: %s",
-                e,
-            )
-
-            return f"Failed to extract data: {e}"
-
+        except APIProcessingError as e:
+            logger.warning("API processing rejected (error_type=%s)", type(e).__name__)
+            return f"Failed to process API data: {e}"
         except Exception as e:
             logger.error(
-                "Unexpected error during API extraction: %s",
-                e,
+                "API processing failed (error_type=%s)",
+                type(e).__name__,
             )
+            return "Failed to process API data due to an internal error."
 
-            return f"Failed to extract data: {e}"
+        try:
+            output_path.mkdir(parents=True, exist_ok=True)
+            output_file = output_path / artifact.filename
+            if output_file.is_symlink():
+                return "Failed to save the processed API file."
+            output_file.write_bytes(artifact.data)
+        except OSError as e:
+            logger.error(
+                "Processed API file could not be saved (error_type=%s)",
+                type(e).__name__,
+            )
+            return "Failed to save the processed API file."
+
+        logger.info("Processed API result saved successfully")
+        return f"Processed data successfully saved to {output_file}"
 
     # -----------------------------------------------------------------------
     # Transform Context
