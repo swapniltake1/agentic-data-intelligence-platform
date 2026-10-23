@@ -545,6 +545,3 @@ This project is licensed under the **GNU General Public License v3.0 (GPL-3.0-on
 
 **Copyright © 2026 Swapnil Take.**
 
-GPL-3.0 allows users to run, study, share, and modify this software, including for commercial purposes, subject to its terms. If you distribute the program or a derivative work, you must comply with GPL-3.0 requirements, including preserving notices, providing the corresponding source code as required, and licensing covered derivative works under GPL-3.0. Private modifications that are not distributed generally do not trigger the source-distribution obligations.
-
-**Important:** GPL-3.0 is an open-source license; it does not prevent people from using the software for free or using it commercially. It requires qualifying distributed derivatives to remain under GPL-3.0. If your goal is to prohibit free reuse or commercial use, GPL-3.0 is not suitable.
