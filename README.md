@@ -541,4 +541,8 @@ uv run python -m pytest --cov=. --cov-report=term-missing -v
 
 ## License
 
-No license file is currently included. Unless a license is added to the repository, reuse and redistribution are not explicitly granted.
+This project is licensed under the [MIT License](LICENSE).
+
+The MIT License permits use, copying, modification, distribution, sublicensing, and sale of copies of the software, provided that the copyright notice and license text are included with substantial portions of the software. The software is provided **"as is"**, without warranty of any kind. See the [`LICENSE`](LICENSE) file for the complete terms.
+
+**Copyright © 2026 Swapnil Take.**
