@@ -294,7 +294,10 @@ def llm_node(
 
         API extraction processes the response in a temporary workspace and
         prepares a downloadable processed file. Do not ask for an output folder
-        for API requests.
+        for API requests. After API extraction, tell the user that a
+        filename-specific download button appears below the chat and that they
+        must select it to start the download. Do not claim the download started
+        automatically or refer to a separate download link.
 
         If the operation is performed then inform the user
         and end the conversation.

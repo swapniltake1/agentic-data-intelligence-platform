@@ -239,75 +239,17 @@ def test_parent_router_rejects_invalid_structured_output(
         )
 
 
-def test_main_streamlit_app_renders_without_network_calls() -> None:
+def test_main_streamlit_app_renders_clean_chat_sidebar() -> None:
     from streamlit.testing.v1 import AppTest
 
     project_root = Path(__file__).resolve().parents[1]
     app = AppTest.from_file(str(project_root / "app.py")).run(timeout=20)
 
     assert not app.exception
-    assert any(button.label == "Fetch and process API data" for button in app.button)
-    assert any(button.label == "Test All Providers" for button in app.button)
-
-
-def test_streamlit_api_form_exposes_processed_download(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    from streamlit.testing.v1 import AppTest
-
-    from utils import api_processing
-
-    def fake_process(url: str, **kwargs: Any) -> api_processing.DownloadArtifact:
-        assert url == "https://example.com/data"
-        assert kwargs["output_format"] == "json"
-        return api_processing.DownloadArtifact(
-            data=b'[{"value":1}]',
-            filename="result.json",
-            mime_type="application/json",
-            record_count=1,
-        )
-
-    monkeypatch.setattr(api_processing, "process_api_to_download", fake_process)
-    project_root = Path(__file__).resolve().parents[1]
-    app = AppTest.from_file(str(project_root / "app.py")).run(timeout=20)
-    app.text_input(key="api_processing_url").set_value("https://example.com/data")
-    app.selectbox(key="api_processing_format").select("json")
-    app.button(
-        key="FormSubmitter:api_processing_form-Fetch and process API data"
-    ).click()
-    app.run(timeout=20)
-
-    assert not app.exception
-    assert app.session_state["api_download"]["data"] == b'[{"value":1}]'
-    download_buttons = app.get("download_button")
-    assert any(button.label == "Download processed file" for button in download_buttons)
-    assert any("Processed 1 record" in message.value for message in app.success)
-
-
-def test_streamlit_api_errors_are_safe_and_keep_download_unavailable(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    from streamlit.testing.v1 import AppTest
-
-    from utils import api_processing
-
-    def fail_process(*_args: Any, **_kwargs: Any):
-        raise api_processing.APIProcessingError(
-            "The API response contains invalid JSON."
-        )
-
-    monkeypatch.setattr(api_processing, "process_api_to_download", fail_process)
-    project_root = Path(__file__).resolve().parents[1]
-    app = AppTest.from_file(str(project_root / "app.py")).run(timeout=20)
-    app.text_input(key="api_processing_url").set_value("https://example.com/data")
-    app.button(
-        key="FormSubmitter:api_processing_form-Fetch and process API data"
-    ).click()
-    app.run(timeout=20)
-
-    assert not app.exception
-    assert any("invalid JSON" in message.value for message in app.error)
-    assert not app.get("download_button")
+    assert any(button.label == "＋  New chat" for button in app.button)
+    assert app.chat_input
+    assert not any("Process API data" in item.value for item in app.get("expander"))
+    assert not any("Test All Providers" in button.label for button in app.button)
 
 
 def test_streamlit_etl_agent_exposes_processed_api_download(
@@ -344,6 +286,6 @@ def test_streamlit_etl_agent_exposes_processed_api_download(
     assert not app.exception
     assert app.session_state["api_download"]["data"] == artifact.data
     assert any(
-        button.label == "Download processed file"
+        button.label == "Download agent-result.json"
         for button in app.get("download_button")
     )

@@ -1494,3 +1494,328 @@
 2026-10-21 17:36:59,351 | INFO | agents.rag_agent | RAG parent node completed
 2026-10-21 17:36:59,351 | INFO | __main__ | Final AI response extracted successfully
 2026-10-21 17:36:59,351 | INFO | __main__ | Assistant response completed. route=rag duration=4.72s
+2026-10-23 11:10:11,805 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-23 11:10:11,805 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-23 11:10:13,769 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-23 11:10:13,769 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-23 11:10:13,769 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-23 11:10:13,778 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-23 11:12:21,801 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-23 11:12:21,801 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-23 11:12:23,652 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-23 11:12:23,668 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-23 11:12:23,668 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-23 11:12:23,679 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-23 11:12:39,669 | INFO | utils.llm_pick | Provider health check succeeded provider=groq model=openai/gpt-oss-120b latency_ms=1971
+2026-10-23 11:12:44,622 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:12:44,960 | INFO | utils.llm_pick | Provider health check succeeded provider=openrouter model=openrouter/free latency_ms=5290
+2026-10-23 11:15:16,747 | INFO | agents.data_agent | Router started
+2026-10-23 11:15:16,749 | INFO | agents.data_agent | Initializing Data Agent router
+2026-10-23 11:15:16,749 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:15:20,233 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=3.349 reason=required model capability is unavailable
+2026-10-23 11:15:20,233 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:15:21,517 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:15:29,433 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=9.188
+2026-10-23 11:15:29,433 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:15:29,433 | INFO | agents.data_agent | Request routed to: etl
+2026-10-23 11:15:29,437 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:15:29,437 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-23 11:15:29,437 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-23 11:15:29,437 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:15:30,383 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.892
+2026-10-23 11:15:30,383 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:15:30,383 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-23 11:15:30,386 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-23 11:15:30,388 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-23 11:15:30,388 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-10-23 11:15:30,388 | INFO | agents.etl_analyst | Extract and load operation started
+2026-10-23 11:15:31,454 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:15:34,094 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=2.582
+2026-10-23 11:15:34,094 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:15:35,942 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.834
+2026-10-23 11:15:36,056 | INFO | utils.api_processing | API processing completed format=csv records_in=100 records_out=10
+2026-10-23 11:15:36,058 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-10-23 11:15:36,058 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-10-23 11:15:36,058 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-23 11:15:36,058 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:15:36,058 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:15:37,175 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=0.091 reason=rate limited or quota exhausted
+2026-10-23 11:15:37,175 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=rate limited or quota exhausted
+2026-10-23 11:15:41,664 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:15:45,067 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=7.890
+2026-10-23 11:15:45,067 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=rate limited or quota exhausted
+2026-10-23 11:15:45,069 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:15:45,069 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-23 11:15:45,069 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:15:45,073 | INFO | __main__ | Assistant response completed. route=etl duration=28.33s
+2026-10-23 11:16:29,075 | INFO | agents.data_agent | Router started
+2026-10-23 11:16:29,081 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:16:30,012 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=0.823 reason=required model capability is unavailable
+2026-10-23 11:16:30,012 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:16:31,536 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:16:41,016 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:17:29,814 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=59.797
+2026-10-23 11:17:29,814 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:17:29,814 | INFO | agents.data_agent | Request routed to: etl
+2026-10-23 11:17:29,814 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:17:29,814 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:17:31,144 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.184
+2026-10-23 11:17:31,144 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:17:31,147 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-23 11:17:31,151 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:17:31,151 | INFO | __main__ | Assistant response completed. route=etl duration=62.08s
+2026-10-23 11:23:40,798 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-23 11:23:40,804 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-23 11:23:40,836 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-23 11:23:40,844 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-23 11:23:40,847 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-23 11:23:40,853 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-23 11:23:41,265 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:23:44,191 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=2.770
+2026-10-23 11:23:44,193 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:23:46,414 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=0.980 reason=required model capability is unavailable
+2026-10-23 11:23:46,414 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:23:47,687 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:23:53,400 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=6.990
+2026-10-23 11:23:53,400 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:23:53,431 | INFO | utils.api_processing | API processing completed format=csv records_in=100 records_out=10
+2026-10-23 11:29:48,760 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-23 11:29:48,769 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-23 11:29:50,861 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-23 11:29:50,878 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-23 11:29:50,882 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-23 11:29:50,887 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-23 11:30:49,832 | INFO | agents.data_agent | Router started
+2026-10-23 11:30:49,832 | INFO | agents.data_agent | Initializing Data Agent router
+2026-10-23 11:30:49,832 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:30:53,649 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=3.223 reason=required model capability is unavailable
+2026-10-23 11:30:53,649 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:30:56,917 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:32:51,199 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:32:57,664 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=121.769
+2026-10-23 11:32:57,664 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:32:57,664 | INFO | agents.data_agent | Request routed to: etl
+2026-10-23 11:32:57,672 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:32:57,672 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-23 11:32:57,674 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-23 11:32:57,675 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:32:58,940 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.136
+2026-10-23 11:32:58,940 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:32:58,940 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-23 11:32:58,950 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-23 11:32:58,952 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-23 11:32:58,952 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-10-23 11:32:58,955 | INFO | agents.etl_analyst | Extract and load operation started
+2026-10-23 11:33:01,330 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:04,008 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=2.552
+2026-10-23 11:33:04,010 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:05,948 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.038
+2026-10-23 11:33:06,021 | INFO | utils.api_processing | API processing completed format=csv records_in=100 records_out=10
+2026-10-23 11:33:06,023 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-10-23 11:33:06,023 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-10-23 11:33:06,023 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-23 11:33:06,026 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:33:06,031 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:07,078 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=0.091 reason=rate limited or quota exhausted
+2026-10-23 11:33:07,078 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=rate limited or quota exhausted
+2026-10-23 11:33:08,605 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:33:11,685 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=4.600
+2026-10-23 11:33:11,685 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=rate limited or quota exhausted
+2026-10-23 11:33:11,687 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:33:11,687 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-23 11:33:11,689 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:33:11,693 | INFO | __main__ | Assistant response completed. route=etl duration=141.86s
+2026-10-23 11:33:28,752 | INFO | agents.data_agent | Router started
+2026-10-23 11:33:28,761 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:31,165 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=2.304 reason=required model capability is unavailable
+2026-10-23 11:33:31,165 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:33:36,970 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:33:41,685 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:33:44,041 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=12.874
+2026-10-23 11:33:44,041 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:33:44,041 | INFO | agents.data_agent | Request routed to: etl
+2026-10-23 11:33:44,047 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:33:44,047 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:45,270 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.146
+2026-10-23 11:33:45,270 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:33:45,270 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-23 11:33:45,276 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-23 11:33:45,276 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-23 11:33:45,278 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-10-23 11:33:45,279 | INFO | agents.etl_analyst | Extract and load operation started
+2026-10-23 11:33:45,638 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:33:49,574 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=3.864 reason=required model capability is unavailable
+2026-10-23 11:33:49,574 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:33:50,391 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:34:35,422 | INFO | agents.data_agent | Router started
+2026-10-23 11:34:35,422 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:36,268 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.757
+2026-10-23 11:34:36,268 | INFO | agents.data_agent | Request routed to: sql
+2026-10-23 11:34:36,281 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-23 11:34:36,283 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:37,265 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.875
+2026-10-23 11:34:37,265 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-23 11:34:37,265 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-23 11:34:37,265 | INFO | utils.database | Initializing database connection
+2026-10-23 11:34:37,496 | INFO | utils.database | Database connection established successfully
+2026-10-23 11:34:37,496 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-23 11:34:37,600 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-23 11:34:37,695 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-23 11:34:37,695 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-23 11:34:37,695 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-23 11:34:37,695 | INFO | agents.sql_analyst | SQL generation started
+2026-10-23 11:34:37,695 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:38,829 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-20b tier=low elapsed_seconds=1.031
+2026-10-23 11:34:38,829 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-23 11:34:38,829 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-23 11:34:38,829 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-23 11:34:38,838 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:39,947 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-20b tier=low elapsed_seconds=0.988
+2026-10-23 11:34:39,947 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-23 11:34:39,947 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-23 11:34:39,947 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-23 11:34:39,962 | INFO | agents.sql_analyst | SQL execution started
+2026-10-23 11:34:39,964 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-23 11:34:39,964 | INFO | utils.database | Initializing database connection
+2026-10-23 11:34:40,032 | INFO | utils.database | Database connection established successfully
+2026-10-23 11:34:40,032 | INFO | utils.database | Executing SQL query
+2026-10-23 11:34:40,105 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-23 11:34:40,105 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-23 11:34:40,112 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-23 11:34:40,113 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:40,985 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.766
+2026-10-23 11:34:40,985 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-23 11:34:40,989 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:34:40,989 | INFO | __main__ | Assistant response completed. route=sql duration=5.57s
+2026-10-23 11:34:55,564 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=65.987
+2026-10-23 11:34:55,566 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:34:55,568 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:34:56,747 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=1.036 reason=required model capability is unavailable
+2026-10-23 11:34:56,747 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=required model capability is unavailable
+2026-10-23 11:34:59,157 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:35:01,556 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:35:03,871 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=7.126
+2026-10-23 11:35:03,871 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=required model capability is unavailable
+2026-10-23 11:35:03,922 | INFO | utils.api_processing | API processing completed format=csv records_in=100 records_out=10
+2026-10-23 11:35:03,928 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-10-23 11:35:03,928 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-10-23 11:35:03,929 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-23 11:35:03,931 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:35:03,934 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:35:04,984 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.916
+2026-10-23 11:35:04,991 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:35:04,992 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-23 11:41:06,718 | INFO | agents.etl_analyst | Building ETL agent graph
+2026-10-23 11:41:06,724 | INFO | agents.etl_analyst | ETL agent graph compiled successfully
+2026-10-23 11:41:08,484 | INFO | agents.sql_analyst | Building SQL Analyst graph
+2026-10-23 11:41:08,500 | INFO | agents.sql_analyst | SQL Analyst graph compiled successfully
+2026-10-23 11:41:08,502 | INFO | agents.data_agent | Initializing Data Agent
+2026-10-23 11:41:08,508 | INFO | agents.data_agent | Data Agent graph compiled successfully
+2026-10-23 11:42:21,058 | INFO | agents.data_agent | Router started
+2026-10-23 11:42:21,058 | INFO | agents.data_agent | Initializing Data Agent router
+2026-10-23 11:42:21,061 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:42:22,833 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.141
+2026-10-23 11:42:22,833 | INFO | agents.data_agent | Request routed to: etl
+2026-10-23 11:42:22,840 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:42:22,840 | INFO | agents.etl_analyst | Initializing ETL agent tools
+2026-10-23 11:42:22,840 | INFO | agents.etl_analyst | ETL agent tools initialized successfully
+2026-10-23 11:42:22,845 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:42:24,230 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.257
+2026-10-23 11:42:24,230 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:42:24,238 | INFO | agents.etl_analyst | Tool call detected. Routing to tool node
+2026-10-23 11:42:24,241 | INFO | agents.etl_analyst | ETL tool node started
+2026-10-23 11:42:24,241 | INFO | agents.etl_analyst | Executing 1 ETL tool call(s)
+2026-10-23 11:42:24,243 | INFO | agents.etl_analyst | Executing ETL tool: extract_load_tool
+2026-10-23 11:42:24,243 | INFO | agents.etl_analyst | Extract and load operation started
+2026-10-23 11:42:25,579 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:42:27,985 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=2.287
+2026-10-23 11:42:27,985 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:42:29,031 | WARNING | utils.llm_pick | LLM provider failed provider=groq model=openai/gpt-oss-120b elapsed_seconds=0.082 reason=rate limited or quota exhausted
+2026-10-23 11:42:29,031 | WARNING | utils.llm_pick | Falling back from provider=groq model=openai/gpt-oss-120b reason=rate limited or quota exhausted
+2026-10-23 11:42:37,544 | INFO | httpx2 | HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2026-10-23 11:43:56,248 | INFO | agents.data_agent | Router started
+2026-10-23 11:43:56,251 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:43:57,217 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.859
+2026-10-23 11:43:57,217 | INFO | agents.data_agent | Request routed to: sql
+2026-10-23 11:43:57,223 | INFO | agents.sql_analyst | SQL question curation started
+2026-10-23 11:43:57,223 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:43:58,245 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.907
+2026-10-23 11:43:58,245 | INFO | agents.sql_analyst | SQL question curation completed
+2026-10-23 11:43:58,254 | INFO | agents.sql_analyst | Preparing SQL query context
+2026-10-23 11:43:58,254 | INFO | utils.database | Initializing database connection
+2026-10-23 11:43:58,329 | INFO | utils.database | Database connection established successfully
+2026-10-23 11:43:58,329 | INFO | utils.database | Fetching schema details for schema: public
+2026-10-23 11:43:58,348 | INFO | utils.database | Found 5 table(s) in schema: public
+2026-10-23 11:43:58,406 | INFO | utils.database | Schema details retrieved successfully for: public
+2026-10-23 11:43:58,406 | INFO | agents.sql_analyst | Database schema retrieved successfully
+2026-10-23 11:43:58,406 | INFO | agents.sql_analyst | SQL query context prepared successfully
+2026-10-23 11:43:58,406 | INFO | agents.sql_analyst | SQL generation started
+2026-10-23 11:43:58,406 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:43:59,779 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-20b tier=low elapsed_seconds=1.269
+2026-10-23 11:43:59,779 | INFO | agents.sql_analyst | SQL generation completed
+2026-10-23 11:43:59,782 | INFO | agents.sql_analyst | SQL safety validation started
+2026-10-23 11:43:59,782 | INFO | agents.sql_analyst | Deterministic SQL safety check passed
+2026-10-23 11:43:59,789 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:00,795 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-20b tier=low elapsed_seconds=0.879
+2026-10-23 11:44:00,801 | INFO | agents.sql_analyst | SQL approved by safety judge
+2026-10-23 11:44:00,801 | INFO | agents.sql_analyst | SQL safety validation completed
+2026-10-23 11:44:00,801 | INFO | agents.sql_analyst | Routing safe SQL to execution
+2026-10-23 11:44:00,804 | INFO | agents.sql_analyst | SQL execution started
+2026-10-23 11:44:00,804 | INFO | agents.sql_analyst | Final SQL safety check passed
+2026-10-23 11:44:00,804 | INFO | utils.database | Initializing database connection
+2026-10-23 11:44:00,998 | INFO | utils.database | Database connection established successfully
+2026-10-23 11:44:00,998 | INFO | utils.database | Executing SQL query
+2026-10-23 11:44:01,085 | INFO | utils.database | SQL query executed successfully; 1 row(s) returned
+2026-10-23 11:44:01,085 | INFO | agents.sql_analyst | SQL execution completed successfully
+2026-10-23 11:44:01,094 | INFO | agents.sql_analyst | Generating final SQL response
+2026-10-23 11:44:01,095 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:01,945 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.752
+2026-10-23 11:44:01,945 | INFO | agents.sql_analyst | Final SQL response generated successfully
+2026-10-23 11:44:01,955 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:44:01,958 | INFO | __main__ | Assistant response completed. route=sql duration=5.71s
+2026-10-23 11:44:10,056 | INFO | agents.data_agent | Router started
+2026-10-23 11:44:10,056 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:10,941 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.749
+2026-10-23 11:44:10,941 | INFO | agents.data_agent | Request routed to: rag
+2026-10-23 11:44:10,941 | INFO | agents.rag_agent | RAG parent node started
+2026-10-23 11:44:10,949 | INFO | agents.rag_agent | RAG node started
+2026-10-23 11:44:10,949 | INFO | agents.rag_agent | Document retrieval started (question_length=33, top_k=4)
+2026-10-23 11:44:10,965 | WARNING | google_genai._api_client | Both GOOGLE_API_KEY and GEMINI_API_KEY are set. Using GOOGLE_API_KEY.
+2026-10-23 11:44:14,397 | INFO | agents.rag_agent | Document retrieval completed (chunks=4, duration_seconds=3.444)
+2026-10-23 11:44:14,397 | INFO | agents.rag_agent | Calling configured LLM for RAG response
+2026-10-23 11:44:14,397 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:15,843 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.265
+2026-10-23 11:44:15,843 | INFO | agents.rag_agent | RAG answer generated (source_count=3, duration_seconds=1.454)
+2026-10-23 11:44:15,855 | INFO | agents.rag_agent | RAG node completed (total_duration_seconds=4.903)
+2026-10-23 11:44:15,855 | INFO | agents.rag_agent | RAG parent node completed
+2026-10-23 11:44:15,859 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:44:15,861 | INFO | __main__ | Assistant response completed. route=rag duration=5.79s
+2026-10-23 11:44:46,133 | INFO | agents.data_agent | Router started
+2026-10-23 11:44:46,136 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:47,189 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=0.936
+2026-10-23 11:44:47,191 | INFO | agents.data_agent | Request routed to: rag
+2026-10-23 11:44:47,191 | INFO | agents.rag_agent | RAG parent node started
+2026-10-23 11:44:47,195 | INFO | agents.rag_agent | RAG node started
+2026-10-23 11:44:47,195 | INFO | agents.rag_agent | Document retrieval started (question_length=26, top_k=4)
+2026-10-23 11:44:48,037 | INFO | agents.rag_agent | Document retrieval completed (chunks=4, duration_seconds=0.841)
+2026-10-23 11:44:48,037 | INFO | agents.rag_agent | Calling configured LLM for RAG response
+2026-10-23 11:44:48,037 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:44:49,541 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.381
+2026-10-23 11:44:49,542 | INFO | agents.rag_agent | RAG answer generated (source_count=4, duration_seconds=1.502)
+2026-10-23 11:44:49,542 | INFO | agents.rag_agent | RAG node completed (total_duration_seconds=2.346)
+2026-10-23 11:44:49,542 | INFO | agents.rag_agent | RAG parent node completed
+2026-10-23 11:44:49,546 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:44:49,546 | INFO | __main__ | Assistant response completed. route=rag duration=3.41s
+2026-10-23 11:47:39,268 | INFO | utils.llm_pick | LLM request succeeded provider=openrouter model=openrouter/free tier=medium elapsed_seconds=309.211
+2026-10-23 11:47:39,268 | INFO | utils.llm_pick | LLM provider fallback succeeded provider=openrouter model=openrouter/free reason=rate limited or quota exhausted
+2026-10-23 11:47:39,340 | INFO | utils.api_processing | API processing completed format=csv records_in=100 records_out=20
+2026-10-23 11:47:39,340 | INFO | agents.etl_analyst | Extract and load operation completed
+2026-10-23 11:47:39,340 | INFO | agents.etl_analyst | ETL tool completed: extract_load_tool
+2026-10-23 11:47:39,340 | INFO | agents.etl_analyst | ETL tool node completed
+2026-10-23 11:47:39,340 | INFO | agents.etl_analyst | ETL LLM node started
+2026-10-23 11:47:39,350 | INFO | utils.llm_pick | Skipping Gemini fallback because free-tier access has not been confirmed.
+2026-10-23 11:47:40,536 | INFO | utils.llm_pick | LLM request succeeded provider=groq model=openai/gpt-oss-120b tier=medium elapsed_seconds=1.082
+2026-10-23 11:47:40,536 | INFO | agents.etl_analyst | ETL LLM node completed
+2026-10-23 11:47:40,553 | INFO | agents.etl_analyst | No tool call detected. Ending ETL workflow
+2026-10-23 11:47:40,553 | INFO | __main__ | Final AI response extracted successfully
+2026-10-23 11:47:40,553 | INFO | __main__ | Assistant response completed. route=etl duration=319.51s
