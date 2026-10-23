@@ -243,13 +243,23 @@ Run the UI with:
 uv run streamlit run app.py
 ```
 
-### Process API data and download results
+### Fetch API data, transform it, and download the result
 
-Expand **Process API data** in the sidebar to enter an HTTP(S) JSON API URL, optional query parameters and headers as JSON objects, optional bearer/basic authentication, filtering instructions, an output format, and a download filename. The same processing and download flow is available through the ETL agent when it handles an API extraction request. Request timeouts are bounded; response bodies are limited to 2 MiB and 2,000 records, and the generated output is capped at 10 MiB.
+Use the main chat input to describe the API task in natural language. For example:
 
-The raw response and generated output are written only inside a unique `TemporaryDirectory` for the job. After the final output is serialized and copied into memory, the temporary directory is removed before Streamlit presents the download button. Streamlit serves the prepared bytes from session state; the application does not claim to know whether the browser saved them locally. A subsequent API submission replaces the previous prepared download. Failures also exit the temporary-directory context and clean up the job files. The ETL agent's API tool uses this same temporary processor; the legacy `ETLTools.extract_load` helper, when called directly, saves only the processed output inside the project and rejects destinations outside it.
+```text
+Fetch data from https://jsonplaceholder.typicode.com/posts.
+Keep only records where userId = 1, return id, title, and body,
+remove duplicate IDs, and prepare a CSV file named processed_posts.csv.
+```
 
-The selected chat provider processes the data according to the instructions in batches of 50 records. The model receives the API records needed for processing; do not submit confidential or regulated data unless your provider and account are approved for it. API credentials and request headers are not logged. Supported outputs are CSV, JSON, and Parquet; Excel is not currently supported.
+The parent agent should route the request to the ETL workflow, which fetches JSON data, applies your filtering/cleaning instructions with the configured chat model, and prepares a download. When processing succeeds, a **Download** button appears in the chat interface. Supported output formats are CSV, JSON, and Parquet; Excel is not currently supported.
+
+The API processor accepts HTTP(S) URLs and supports optional query parameters, request headers, and bearer/basic authentication through its programmatic interface. Requests use bounded timeouts. Responses are limited to 2 MiB and 2,000 records, and the generated output is capped at 10 MiB. The AI transforms records in batches of up to 50.
+
+Raw API data and intermediate files are written only inside a unique temporary directory for each job. After the final output is serialized into memory, that temporary directory is removed before Streamlit presents the download button. Streamlit serves the prepared bytes from session state; it cannot confirm whether the browser saved the file locally. A later successful API-processing request replaces the previously prepared download. Temporary files are cleaned up on processing errors as well.
+
+API credentials and request headers are not logged. Avoid sending confidential or regulated data to an AI provider unless your provider and account are approved for that data. Note that the legacy `ETLTools.extract_load` helper, when called directly, saves the processed output to a project-local destination; the chat-based API download workflow uses temporary storage.
 
 
 ### Existing graph visualizations
@@ -310,15 +320,19 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 │   ├── retriever.py          # Similarity retrieval helpers
 │   └── vector_store.py       # Gemini embedding and Chroma configuration
 ├── utils/
-│   ├── data/
-│   │   └── extract/
+│   ├── api_processing.py    # Temporary API processing and download artifacts
 │   ├── database.py
 │   ├── etl_tools.py
 │   ├── feed_db.py
 │   ├── graph_visualization.py
-│   └── llm_pick.py
-├── logs/
-│   └── app.log
+│   ├── llm_pick.py          # Multi-provider LLM selection and fallback
+│   └── ui_errors.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_api_processing.py
+│   ├── test_application_regressions.py
+│   └── test_llm_pick.py
+├── logs/                    # Runtime logs (generated locally)
 ├── app.py
 ├── logging_config.py
 ├── main.py
@@ -329,10 +343,7 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 ├── etl_analyst_graph.png
 ├── rag_agent_graph.png
 ├── sql_analyst_graph.png
-├── etl_analyst_graph.png
-├── pyproject.toml
-├── uv.lock
-└── README.md
+└── uv.lock
 ```
 
 ## Getting Started
@@ -509,16 +520,19 @@ uv run python -m pytest --cov=. --cov-report=term-missing -v
 - [x] Parent LangGraph router for SQL, ETL, and RAG requests
 - [x] SQL Analyst workflow with deterministic checks and LLM safety review
 - [x] ETL Analyst workflow with API/file transformation tools
+- [x] Temporary API-to-download workflow with CSV, JSON, and Parquet outputs
+- [x] Temporary-workspace cleanup on success and processing failures
 - [x] RAG ingestion for Markdown, text, and PDF sources
 - [x] Text chunking and persistent Chroma indexing
 - [x] Similarity retrieval and context-grounded responses using the configured chat provider
 - [x] Free-first multi-provider chat selection and explicit provider health checks
-- [x] Streamlit conversational interface
+- [x] Streamlit conversational interface and downloadable processed artifacts
+- [x] Automated pytest suite for API processing, LLM selection, and application regressions
 - [x] Centralized LLM configuration and application logging
 
 ### Potential next steps
 
-- Add automated unit and integration tests for routing, ingestion, retrieval, and SQL validation
+- Expand automated coverage for additional routing, ingestion, retrieval, and SQL-validation edge cases
 - Add evaluation datasets for retrieval relevance and answer faithfulness
 - Add source/page citations to RAG responses where appropriate
 - Add a sandbox for ETL code execution
