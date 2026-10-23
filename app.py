@@ -8,6 +8,8 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from logging_config import setup_logging
 from agents.data_agent import data_agent
+from utils.api_processing import capture_api_download
+from utils.ui_errors import safe_agent_error_message
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -218,16 +220,8 @@ def get_safe_error_message(exception: Exception) -> str:
 
     error_type = type(exception).__name__
 
-    logger.error(
-        "Agent request failed [%s]: %s",
-        error_type,
-        exception,
-    )
-
-    return (
-        "I couldn't complete your request right now. "
-        "Please try again."
-    )
+    logger.error("Agent request failed [%s]", error_type)
+    return safe_agent_error_message(exception)
 
 # ============================================================
 # Conversation State
@@ -273,7 +267,7 @@ def active_messages():
 # ============================================================
 
 with st.sidebar:
-    st.markdown("## 💬 Chats")
+    st.markdown("## Chats")
 
     if st.button("＋  New chat", use_container_width=True, key="new_chat_button"):
         create_new_chat()
@@ -313,6 +307,18 @@ for message in messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+api_download = st.session_state.get("api_download")
+if api_download:
+    st.caption("Your processed file is ready. Select the button to download it.")
+    st.download_button(
+        f"Download {api_download['filename']}",
+        data=api_download["data"],
+        file_name=api_download["filename"],
+        mime=api_download["mime_type"],
+        key="chat_api_processed_download",
+        width="stretch",
+    )
+
 user_input = st.chat_input("Message your data assistant...")
 
 
@@ -337,13 +343,22 @@ if user_input and user_input.strip():
         try:
             with st.spinner("Thinking..."):
                 start_time = time.perf_counter()
-                result = data_agent.invoke(
-                    {
-                        "messages": [HumanMessage(content=user_input)],
-                        "route_response": "",
-                    },
-                    config={"recursion_limit": AGENT_RECURSION_LIMIT},
-                )
+                with capture_api_download() as api_download_result:
+                    result = data_agent.invoke(
+                        {
+                            "messages": [HumanMessage(content=user_input)],
+                            "route_response": "",
+                        },
+                        config={"recursion_limit": AGENT_RECURSION_LIMIT},
+                    )
+                if "artifact" in api_download_result:
+                    artifact = api_download_result["artifact"]
+                    st.session_state.api_download = {
+                        "data": artifact.data,
+                        "filename": artifact.filename,
+                        "mime_type": artifact.mime_type,
+                        "record_count": artifact.record_count,
+                    }
                 duration = time.perf_counter() - start_time
 
             if not isinstance(result, dict):

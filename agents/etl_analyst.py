@@ -28,6 +28,10 @@ from langgraph.graph import (
 )
 from langchain.tools import tool
 
+from utils.api_processing import (
+    process_api_to_download,
+    publish_api_download,
+)
 from utils.etl_tools import ETLTools
 from utils.graph_visualization import save_graph_png
 from utils.llm_pick import (
@@ -52,47 +56,43 @@ logger = logging.getLogger(__name__)
 @tool
 def extract_load_tool(
     url: str,
-    output_folder: str,
-    format: str,
+    output_format: str,
+    instructions: str = "",
 ) -> str:
     """
-    Extract data from an API endpoint and load it into
-    the specified folder.
+    Fetch JSON data from an API, apply the requested processing, and prepare
+    a downloadable file. API responses and intermediate files are temporary.
 
     Args:
         url: API endpoint from which to extract data.
-        output_folder: Folder where extracted data will be saved.
-        format: Output format such as csv, json, or parquet.
+        output_format: Output format such as csv, json, or parquet.
+        instructions: Optional filtering or cleaning instructions.
 
     Returns:
-        Message indicating success or failure.
+        Message indicating the processed file is ready for download.
     """
 
     logger.info("Extract and load operation started")
 
     try:
-
-        etl_tools = ETLTools()
-
-        result = etl_tools.extract_load(
+        artifact = process_api_to_download(
             url,
-            output_folder,
-            format,
+            output_format=output_format,
+            instructions=instructions,
         )
+        publish_api_download(artifact)
 
-        logger.info(
-            "Extract and load operation completed"
+        logger.info("Extract and load operation completed")
+        return (
+            f"Processed {artifact.record_count} record(s) into "
+            f"{artifact.filename}; the file is ready for download."
         )
-
-        return result
 
     except Exception as e:
-
         logger.error(
-            "Extract and load operation failed: %s",
-            e,
+            "Extract and load operation failed (error_type=%s)",
+            type(e).__name__,
         )
-
         raise
 
 
@@ -286,11 +286,18 @@ def llm_node(
 
         prompt = f"""
         You are a Python Data Analyst who has access to tools
-        that can extract and load, transform and load data.
+        that can process API data for download and transform local files.
 
         You will be provided with a user's question, and you
         would need to perform the right ETL operations as per
         the user's question.
+
+        API extraction processes the response in a temporary workspace and
+        prepares a downloadable processed file. Do not ask for an output folder
+        for API requests. After API extraction, tell the user that a
+        filename-specific download button appears below the chat and that they
+        must select it to start the download. Do not claim the download started
+        automatically or refer to a separate download link.
 
         If the operation is performed then inform the user
         and end the conversation.

@@ -25,12 +25,13 @@ The platform currently provides three specialist workflows:
 - CSV-driven PostgreSQL database population
 - API extraction and Pandas transformation tools for ETL workflows
 - Markdown, TXT, and PDF ingestion with persistent Chroma retrieval for RAG
-- Gemini model tiers with centralized configuration
-- Model fallback handling for unavailable/rate-limited models
+- Free-first Groq → OpenRouter → Gemini chat-provider priority
+- LOW, MEDIUM, and HIGH model tiers with per-provider model overrides
+- Bounded transient-error fallback across configured providers
 - Retry handling for temporary service/server failures
 - Streamlit chat interface with conversation history
 - Suggested business questions from the welcome screen
-- Live model status checks for configured Gemini tiers
+- Explicit live provider health checks and selected-provider diagnostics
 - Response metadata showing analyst, model tier, and execution time
 - Safe frontend error messages while detailed errors are retained in logs
 - Centralized rotating file logging for application diagnostics
@@ -57,7 +58,7 @@ flowchart LR
     E --> API["External APIs"]
     E --> FILE["Files / Pandas"]
     G --> CHROMA["Persistent Chroma Store"]
-    P --> LLM["Gemini Model Layer"]
+    P --> LLM["Free-First LLM Provider Factory"]
     S --> LLM
     E --> LLM
     G --> LLM
@@ -111,7 +112,7 @@ flowchart TB
     RAG --> RETRIEVE[Similarity Retriever]
     RETRIEVE --> CHROMA[(Persistent Chroma Vector Store)]
     CHROMA --> CONTEXT[Retrieved Document Chunks]
-    CONTEXT --> GEMINI[Google Gemini Response Generation]
+    CONTEXT --> LLM[Configured Chat Provider]
 
     SQLANSWER --> RESPONSE[Final Response]
     ETLANSWER --> RESPONSE
@@ -160,7 +161,7 @@ flowchart LR
         QUESTION["User question"]
         SEARCH["Similarity search<br/>default top-k: 4"]
         CONTEXT["Retrieved context"]
-        RESPONSE["Gemini response generation"]
+        RESPONSE["Configured chat-provider response generation"]
         ANSWER["Final answer"]
         QUESTION --> SEARCH --> CONTEXT --> RESPONSE --> ANSWER
     end
@@ -174,7 +175,7 @@ flowchart LR
 flowchart LR
     UI["Streamlit UI"] --> APP["Application"]
     APP --> AGENTS["Agent Workflows"]
-    AGENTS --> MODEL["Gemini Models"]
+    AGENTS --> MODEL["Groq / OpenRouter / Gemini chat models"]
     AGENTS --> DB["PostgreSQL"]
     AGENTS --> ETL["ETL Tools"]
     AGENTS --> RAG["RAG Retrieval"]
@@ -195,9 +196,10 @@ flowchart LR
 - **ETL Analyst** handles extraction and transformation requests.
 - **RAG Analyst** retrieves indexed document chunks and generates grounded responses.
 - **LangGraph** manages the stateful specialist workflows.
-- **Gemini** provides routing, reasoning, SQL generation, safety review, embeddings, and response synthesis.
+- **Groq and OpenRouter** are preferred for chat generation, with **Gemini** as a supported fallback. Gemini remains the RAG embedding provider.
 - **PostgreSQL** provides structured source data and schema metadata.
 - **Chroma** persists document embeddings and supports similarity retrieval. Ingestion uses 1,000-character chunks with 150-character overlap; query-time retrieval defaults to the top 4 chunks.
+- **Gemini embeddings** are separate from chat generation and remain unchanged for both Chroma indexing and retrieval.
 - **RAG ingestion and retrieval** are operations inside the ingestion workflow and `rag_llm_node`, not separate nodes in the RAG LangGraph.
 - **Deterministic SQL validation** is the first safety boundary before database execution.
 - **LLM safety judging** provides a second review layer for generated SQL.
@@ -228,9 +230,10 @@ The Streamlit application in [app.py](app.py) provides:
 - New Chat and session-based history
 - Suggested business questions
 - Access to SQL, ETL, and RAG workflows through the Data Agent
-- Gemini LOW, MEDIUM, and HIGH model status
-- Test All Models functionality
+- Groq, OpenRouter, and Gemini model status
+- Explicit Test All Providers functionality
 - Analyst/model/execution-time response metadata
+- Direct API-to-processed-file workflow with CSV, JSON, or Parquet downloads
 - User-friendly error handling
 - Custom responsive application styling
 
@@ -239,6 +242,15 @@ Run the UI with:
 ```bash
 uv run streamlit run app.py
 ```
+
+### Process API data and download results
+
+Expand **Process API data** in the sidebar to enter an HTTP(S) JSON API URL, optional query parameters and headers as JSON objects, optional bearer/basic authentication, filtering instructions, an output format, and a download filename. The same processing and download flow is available through the ETL agent when it handles an API extraction request. Request timeouts are bounded; response bodies are limited to 2 MiB and 2,000 records, and the generated output is capped at 10 MiB.
+
+The raw response and generated output are written only inside a unique `TemporaryDirectory` for the job. After the final output is serialized and copied into memory, the temporary directory is removed before Streamlit presents the download button. Streamlit serves the prepared bytes from session state; the application does not claim to know whether the browser saved them locally. A subsequent API submission replaces the previous prepared download. Failures also exit the temporary-directory context and clean up the job files. The ETL agent's API tool uses this same temporary processor; the legacy `ETLTools.extract_load` helper, when called directly, saves only the processed output inside the project and rejects destinations outside it.
+
+The selected chat provider processes the data according to the instructions in batches of 50 records. The model receives the API records needed for processing; do not submit confidential or regulated data unless your provider and account are approved for it. API credentials and request headers are not logged. Supported outputs are CSV, JSON, and Parquet; Excel is not currently supported.
+
 
 ### Existing graph visualizations
 
@@ -256,7 +268,8 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 
 - **Language:** Python 3.12+
 - **Agent orchestration:** LangGraph
-- **LLM and embeddings:** Google Gemini through LangChain integrations
+- **Chat LLMs:** Groq, OpenRouter (OpenAI-compatible API), and Google Gemini through LangChain integrations
+- **Embeddings:** Google Gemini through LangChain integrations
 - **Agent framework:** LangChain
 - **Structured database:** PostgreSQL, `psycopg2`
 - **Vector database:** Chroma with persistent local storage
@@ -328,7 +341,8 @@ The Mermaid diagrams above document the high-level platform and RAG flow. The RA
 
 - Python 3.12 or later
 - PostgreSQL instance and credentials for SQL/ETL features that use the database
-- Google AI API key(s) required by your configured Gemini model and embedding integrations
+- API keys for one or more chat providers (Groq, OpenRouter, or Gemini)
+- `GOOGLE_API_KEY` for Gemini embeddings used by RAG
 - Git
 
 ### 1. Clone the repository
@@ -340,9 +354,15 @@ cd agentic-data-intelligence-platform
 
 ### 2. Create and configure environment variables
 
-Create a `.env` file in the project root. Keep real credentials out of source control.
+Copy `.env.example` to `.env` in the project root and add credentials locally. Keep real credentials out of source control.
 
 ```env
+# Preferred free-first chat providers
+GROQ_API_KEY=your_groq_api_key
+OPENROUTER_KEY=your_openrouter_api_key
+LLM_PROVIDER_PRIORITY=groq,openrouter,gemini
+LLM_FREE_ONLY=true
+
 # PostgreSQL — required for database-backed workflows
 DB_HOST=localhost
 DB_PORT=5432
@@ -350,16 +370,16 @@ DB_NAME=your_database_name
 DB_USER=your_postgres_user
 DB_PASSWORD=your_postgres_password
 
-# Gemini / Google AI
+# Gemini chat fallback
 GEMINI_API_KEY=your_gemini_api_key
 GOOGLE_API_KEY=your_google_api_key
 
-# Optional RAG configuration
-# RAG_COLLECTION_NAME=ola_knowledge
-# GOOGLE_EMBEDDING_MODEL=gemini-embedding-001
+# RAG embeddings are independent from the chat provider
+GOOGLE_EMBEDDING_MODEL=gemini-embedding-001
+RAG_COLLECTION_NAME=ola_knowledge
 ```
 
-The RAG embedding factory currently reads `GOOGLE_API_KEY`. Configure the key according to the model and LangChain integration you are using. Never commit a real key.
+`OPENROUTER_KEY` is preferred; `OPENROUTER_API_KEY` is accepted as an alias. `GROQ_KEY` remains accepted as a Groq alias. The embedding factory continues to read `GOOGLE_API_KEY` and is not affected by chat-provider selection. Never commit a real key.
 
 ### 3. Install dependencies
 
@@ -367,6 +387,12 @@ Using `uv` (recommended when available):
 
 ```bash
 uv sync
+```
+
+Install development dependencies, including pytest and coverage, with:
+
+```bash
+uv sync --group dev
 ```
 
 Or install the project dependencies with pip:
@@ -414,7 +440,7 @@ Then open the local URL printed by Streamlit. You can ask for SQL-backed analysi
 ## How to Use the RAG Feature
 
 1. Add relevant business or domain documents to `knowledge_base/documents/`.
-2. Set the Google AI key used by the embedding integration.
+2. Set `GOOGLE_API_KEY` for Gemini embeddings and configure at least one chat provider.
 3. Run the ingestion command to build the Chroma index.
 4. Launch the Streamlit application.
 5. Ask a natural-language question about the indexed material. The parent agent should route document-knowledge questions to the RAG specialist.
@@ -423,9 +449,15 @@ The RAG agent uses similarity retrieval with a default `top_k` of 4. Retrieved t
 
 ## Configuration Notes
 
-- Gemini model-tier configuration is centralized in `utils/llm_pick.py`.
-- The parent router is configured with the project's medium-tier base LLM.
-- RAG response generation uses the configured medium-tier model.
+- Chat provider priority defaults to Groq, OpenRouter, then Gemini. Override it with `LLM_PROVIDER_PRIORITY`.
+- Chat model tiers are configured centrally in `utils/llm_pick.py`. Override models with `GROQ_MODEL_LOW/MEDIUM/HIGH`, `OPENROUTER_MODEL_LOW/MEDIUM/HIGH`, or `GEMINI_MODEL_LOW/MEDIUM/HIGH`.
+- Groq defaults to `openai/gpt-oss-20b` for LOW and `openai/gpt-oss-120b` for MEDIUM/HIGH. These are Groq's documented replacements for the deprecated Llama 3.1/3.3 models ([supported models](https://console.groq.com/docs/models), [deprecations](https://console.groq.com/docs/deprecations)); Groq documents tool use for hosted models ([tool use](https://console.groq.com/docs/tool-use)). Override models as the supported-model list changes. OpenRouter defaults to its [`openrouter/free` router](https://openrouter.ai/openrouter/free), which advertises structured output and tool calling.
+- `LLM_FREE_ONLY=true` is the default. Paid OpenRouter model IDs are refused; use `openrouter/free` or a verified model ID ending in `:free`.
+- Gemini is not used as an automatic free-only fallback unless `GEMINI_FREE_TIER_CONFIRMED=true` is set after checking that the configured model and account have free-tier access. Set `LLM_FREE_ONLY=false` only if paid usage is acceptable.
+- Requests retry transient failures a bounded number of times and then try the next configured provider at the same tier. Authentication and invalid-request failures are not treated as quota fallback.
+- The sidebar shows each provider's configured model, priority, and explicit health-check results. Health requests run only after selecting **Test All Providers**.
+- Provider model availability, free-tier access, quotas, and rate limits are controlled by the providers and can change. A configured free-model route does not guarantee a particular model, quota, availability, or zero cost under every provider account.
+- Chat generation and RAG embeddings use separate integrations: the chat provider may be Groq/OpenRouter/Gemini, while Chroma indexing and retrieval continue to use Gemini embeddings.
 - The RAG embedding model defaults to `gemini-embedding-001`; override with `GOOGLE_EMBEDDING_MODEL` if needed.
 - The Chroma collection defaults to `ola_knowledge`; override with `RAG_COLLECTION_NAME`.
 - The Chroma index is stored locally under `knowledge_base/chroma_db/`.
@@ -435,6 +467,31 @@ The RAG agent uses similarity retrieval with a default `top_k` of 4. Retrieved t
 Logging is configured through `logging_config.py` and is used across the application's agent workflows. The existing configuration supports console output and a rotating `logs/app.log` file, helping with troubleshooting without displaying detailed internal exceptions directly in the chat UI.
 
 Do not log secrets, API keys, passwords, or confidential document content.
+
+## Automated tests
+
+Tests mock provider, API, database, and vector-store boundaries; they do not require real credentials, live API requests, or a database. Install development dependencies with `uv sync --group dev`, then run from the repository root:
+
+```bash
+python -m pytest -v
+python -m pytest --cov=. --cov-report=term-missing -v
+```
+
+If the project virtual environment is not active, run the same commands through `uv run`:
+
+```bash
+uv run python -m pytest -v
+uv run python -m pytest --cov=. --cov-report=term-missing -v
+```
+
+### Provider troubleshooting
+
+- **429 / quota exhausted:** the request falls through the configured provider order after bounded retries. Check the provider's usage dashboard and limits.
+- **401 / 403:** verify the key for that provider; authentication failures are surfaced rather than silently masked by another key.
+- **Model unavailable / 404:** update the relevant per-tier model override to a currently supported model. Groq's supported model list is provider-controlled.
+- **OpenRouter free-only rejection:** check that the configured model is `openrouter/free` or an explicitly free model ID ending in `:free`.
+- **No provider configured:** set at least one of `GROQ_API_KEY`, `OPENROUTER_KEY`, or `GEMINI_API_KEY` / `GOOGLE_API_KEY`.
+- **RAG embedding or index errors:** configure `GOOGLE_API_KEY` and keep `GOOGLE_EMBEDDING_MODEL` consistent with the existing Chroma index. Changing embedding models requires re-indexing; this change does not change that integration.
 
 ## Security and Operational Considerations
 
@@ -454,7 +511,8 @@ Do not log secrets, API keys, passwords, or confidential document content.
 - [x] ETL Analyst workflow with API/file transformation tools
 - [x] RAG ingestion for Markdown, text, and PDF sources
 - [x] Text chunking and persistent Chroma indexing
-- [x] Similarity retrieval and context-grounded Gemini responses
+- [x] Similarity retrieval and context-grounded responses using the configured chat provider
+- [x] Free-first multi-provider chat selection and explicit provider health checks
 - [x] Streamlit conversational interface
 - [x] Centralized LLM configuration and application logging
 

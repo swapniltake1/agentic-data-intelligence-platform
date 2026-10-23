@@ -8,4 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
-.env
+.env*
+!.env.example
+
+# Test coverage reports
+.coverage
+.coverage.*
+htmlcov/

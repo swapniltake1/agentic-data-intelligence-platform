@@ -1,2 +1,0 @@
-id,name,height,weight,base_experience,order,is_default,type_names,ability_names,stats_summary,front_default,front_shiny
-1,bulbasaur,7,69,64,1,True,grass; poison,overgrow; chlorophyll,hp:45; attack:49; defense:49; special-attack:65; special-defense:65; speed:45,https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png,https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/1.png
