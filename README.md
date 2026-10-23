@@ -541,8 +541,10 @@ uv run python -m pytest --cov=. --cov-report=term-missing -v
 
 ## License
 
-This repository uses a custom **Proprietary License — All Rights Reserved**. The source is available to view for evaluation, but no permission is granted to copy, modify, redistribute, or use it commercially without prior written permission, subject to applicable law and the terms of the hosting platform. See the [`LICENSE`](LICENSE) file for the full notice.
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0-only)**. See the [`LICENSE`](LICENSE) file for the complete license text.
 
-**Copyright © 2026 Swapnil Take. All rights reserved.**
+**Copyright © 2026 Swapnil Take.**
 
-This is not a standard open-source license. Because this repository is public, visitors can still view and clone it through GitHub; this notice does not technically prevent copying. Changing from MIT also does not revoke rights already granted under MIT to copies obtained while that license applied.
+GPL-3.0 allows users to run, study, share, and modify this software, including for commercial purposes, subject to its terms. If you distribute the program or a derivative work, you must comply with GPL-3.0 requirements, including preserving notices, providing the corresponding source code as required, and licensing covered derivative works under GPL-3.0. Private modifications that are not distributed generally do not trigger the source-distribution obligations.
+
+**Important:** GPL-3.0 is an open-source license; it does not prevent people from using the software for free or using it commercially. It requires qualifying distributed derivatives to remain under GPL-3.0. If your goal is to prohibit free reuse or commercial use, GPL-3.0 is not suitable.
